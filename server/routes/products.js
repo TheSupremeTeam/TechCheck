@@ -32,13 +32,15 @@ const upload = multer({
 // Route to get list of crypto currencies for drop down.
 // router.get("/", products.findAll);
 router.post('/category',products.categorySearch)
-router.post('/search',products.search)
+router.post('/search',products.search);
 router.post('/user/products',products.userProducts);
 router.get("/product/:id", products.findById);
+router.get(`/cart/:user`,products.findCartItem);
 router.post("/", products.create);
 router.put("/:id", products.update);
 router.delete("/:id", products.remove);
-router.post('/search',products.search)
+router.post('/search',products.search);
+router.post('/cart',products.addToCart)
 router.post('/upload', upload.array('upl', 1), function (req, res, next) {
     res.send("Uploaded!");
   });

@@ -184,7 +184,6 @@ address: dbModel.dataValues.address
          //send the front end a string of noMatch telling the front end to prompt the user to retry 
         } else {
           res.send("noMatch");
-          console.log('you got it wrong')
         }
       });
 
@@ -211,8 +210,7 @@ address: dbModel.dataValues.address
         }
       }).then(function (data) {
         if (data != null) {
-console.log(data)
-          console.log('hi')
+
           res.send('already')
 
 
@@ -340,8 +338,7 @@ console.log(req.params.id)
       .catch(err => res.status(422).json(err));
   },
   forgot: function (req, res) {
-    console.log('here')
-   console.log(req.body)
+  
         db.Users.findOne({
            
             where: {
@@ -413,7 +410,7 @@ res.send('not valid')
          
     
     
-        console.log('hi')
+      
         console.log(req.body.newpass)
         
         bcrypt.hash(req.body.passswordConfirm, saltRounds, function (err, hash) {

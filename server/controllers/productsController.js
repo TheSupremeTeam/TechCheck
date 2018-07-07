@@ -29,6 +29,16 @@ const upload = multer({
   })
 });
 
+function getDbDate (value) {
+  const split=JSON.stringify(value);
+const dbDate = split.split(':')
+const splitDate=dbDate[0].split('-')
+const dayCreated =splitDate[2].split('T')
+const removed=splitDate[0].split('"')
+
+const dates=splitDate[1]+'-'+dayCreated[0]+'-'+removed[1]
+return dates
+ };
 // Defining methods for the booksController
 const controller = {
   
@@ -92,7 +102,7 @@ console.log(dbModel.length)
       .catch(err => res.status(422).json(err));
   },
   findById: function(req, res) {
-  console.log(req.params.id)
+
     db.Products.findOne({
         where: {
           id: req.params.id,
@@ -100,18 +110,10 @@ console.log(dbModel.length)
         }
       })
       .then(dbModel => {
-        console.log(dbModel)
-        function getDbDate () {
-          const split=JSON.stringify(dbModel.dataValues.createdAt);
-     const dbDate = split.split(':')
-     const splitDate=dbDate[0].split('-')
-    const dayCreated =splitDate[2].split('T')
-    const removed=splitDate[0].split('"')
+        // console.log(dbModel)
    
-   const dates=splitDate[1]+'-'+dayCreated[0]+'-'+removed[1]
-  return dates
-         }
-       const  createdOn=getDbDate()
+     
+       const  createdOn=getDbDate(dbModel.dataValues.createdAt)
          const product={
 id:dbModel.dataValues.id,
 userId:dbModel.dataValues.userId,
@@ -130,9 +132,73 @@ verified:dbModel.dataValues.verified,
 createdAt:createdOn
 
          }
+         
       res.send(product)
       })
       .catch(err => res.status(422).json(err));
+  },
+  findCartItem:function(req,res){
+ const myArray=[];
+    db.Carts.findAll({
+      where:{
+        UserId: req.params.user
+      }
+    }).then(data=>{
+     myArray.push(data[0].dataValues)
+  
+      // for(let i =0;i<data.length;i++){
+       
+        // db.Products.findOne({
+        //   where:{
+        //     id:data[0].dataValues.ProductInfo
+        //   }
+        // }).then(cartData=>{
+
+// console.log(cartData.dataValues);
+
+//  const  createdOn=getDbDate(cartData.dataValues.createdAt);
+ 
+// let theProduct={
+//   id:cartData.dataValues.id,
+//   userId:cartData.dataValues.userId,
+//   productName:cartData.dataValues.productName,
+//   serialNumber:cartData.dataValues.serialNumber,
+//   category:cartData.dataValues.category,
+//   price:cartData.dataValues.price,
+//   productDescription:cartData.dataValues.productDescription,
+//   condition:cartData.dataValues.condition,
+//   warranty:cartData.dataValues.warranty,
+//   packaging:cartData.dataValues.packaging,
+//   userUploadImage1:cartData.dataValues.userUploadImage1,
+//   userUploadImage2:cartData.dataValues.userUploadImage2,
+//   status:cartData.dataValues.status,
+//   verified:cartData.dataValues.verified,
+//   createdAt:createdOn
+// };
+// myArray.push(theProduct);
+// console.log(myArray)
+        // }) 
+        
+      // }
+      // res.send('thefuckingcart');
+
+      // console.log(data[1].dataValues)
+   
+    }).catch(err =>console.log(err));
+    console.log(myArray)
+// res.send(myArray);
+  },
+  addToCart:function(req,res){
+    console.log(req.body)
+   
+   
+    console.log(req.body.user)
+       db.Carts.create({
+        ProductInfo:req.body.Product,
+        UserId:req.body.user
+      }).then(data=>{
+        res.send('done')
+      }).catch(err => res.status(422).json(err));
   },
   categorySearch:function(req,res){
 
@@ -188,7 +254,7 @@ console.log('hrll',newo)
     })
   },
   search:function(req,res){
-    console.log(req.body)
+    // console.log(req.body)
     let offset=15
  let limit=15
     offset =parseInt(req.body.page)
@@ -197,8 +263,8 @@ console.log('hrll',newo)
    
 
     let catsearch='%'+category+'%'
-    console.log(catsearch)
-    console.log('helloits',typeof limit)
+    // console.log(catsearch)
+    // console.log('helloits',typeof limit)
     function changingLimit (){
       let newo
     if(limit==30){
@@ -208,7 +274,7 @@ console.log('hrll',newo)
     return newo
     }changingLimit()
     let newOffset=changingLimit();
-    console.log('hrll',newOffset)
+    // console.log('hrll',newOffset)
   //   {productDescription: 
   //     {[Op.like] : catsearch}
   // }
@@ -232,7 +298,7 @@ console.log('hrll',newo)
       
       },
   create: function(req, res) {
-    console.log(req.body)
+    // console.log(req.body)
     db.Products.create({
       userId:req.body.userId,
       

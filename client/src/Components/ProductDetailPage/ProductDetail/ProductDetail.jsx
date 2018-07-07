@@ -54,6 +54,10 @@ class productDetail extends Component {
                 photosImg,
             ]
             console.log(data.data.verified)
+            let sold;
+            if (data.data.status==='sold'){
+                sold='Sold'
+            }
             let used;
             if(data.data.condition=='old'){
 used='Used'
@@ -77,7 +81,7 @@ true1='True'
                 warranty: data.data.warranty,
                 packaging: data.data.packaging,
                 verified: true1||data.data.verified,
-                status: data.data.status,
+                status: sold||data.data.status,
                 createdAt: data.data.createdAt
             })
         })
