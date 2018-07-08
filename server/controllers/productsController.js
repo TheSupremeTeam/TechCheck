@@ -1,7 +1,7 @@
 
 import db from"../models"
- import s3Key from '../../awskey'
- import s3Secret from '../../awssecret'
+//  import s3Key from '../../awskey'
+//  import s3Secret from '../../awssecret'
 import aws from 'aws-sdk'
 import sequelize from 'sequelize'
 import multer from 'multer'
@@ -10,8 +10,8 @@ const Op = sequelize.Op;
 // ||s3Secret
 // ||s3Key
 aws.config.update({
-  accessKeyId:process.env.s3_key||s3Key,
-  secretAccessKey: process.env.s3_secret||s3Secret
+  accessKeyId:process.env.s3_key,
+  secretAccessKey: process.env.s3_secret
 });
 const s3 = new aws.S3();
 const upload = multer({

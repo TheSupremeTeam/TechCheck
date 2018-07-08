@@ -8,9 +8,9 @@ import moment from 'moment';
 // || jwtSecret;
 
 // ||sendGridkey;
-const secret = process.env.jwt|| jwtSecret
+const secret = process.env.jwt
 const saltRounds =10;
-const sengrido =process.env.sendgrid ||sendGridkey
+const sengrido =process.env.sendgrid 
 sgMail.setApiKey(sengrido);
 // Defining methods for the booksController process.env.sendgrid ||
 const controller = {
