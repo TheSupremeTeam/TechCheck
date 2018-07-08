@@ -18,6 +18,7 @@ import { UserProfile, UserProducts, verification, reset, resetPassword, emailSen
 import Search from '../src/Components/SearchedPage/SearchResults/search'
 import axios from "axios";
 import Receipt from '../src/Components/CheckOutPage/Receipt'
+import cartApi from '../src/Components/Data/products-api'
 import {List, ListItem} from 'material-ui/List';
 import MobileTearSheet from '.'
 import Divider from 'material-ui/Divider';
@@ -35,26 +36,7 @@ class App extends Component {
 
 
     componentDidMount = () => {
-
-    
-        if (localStorage.getItem('CartItem')) {
-            this.setState({ cartItem: parseInt(localStorage.getItem('CartItem')) });
-        }
-
-        if (localStorage.getItem('CartAmount')) {
-            this.setState({ cartAmount: parseInt(localStorage.getItem('CartAmount')) });
-        }
-
-        if (localStorage.getItem('cartarray')) {
-            if (localStorage.getItem('cartarray').length == 0) {
-                this.setState({ cartarray: [] });
-            } else {
-                const tmp = JSON.parse(localStorage.getItem('cartarray'));
-               // const tmp = []; //JSON.parse(null);
-                this.setState({ cartarray: tmp });
-            }
-        }
-
+     let theuser;
         if (sessionStorage.auth != null) {
             // console.log('auth')
 
@@ -68,6 +50,7 @@ class App extends Component {
             }).then(user => {
                 if (user != null) {
                     //console.log(user)
+             
                     this.setState({
                         logged: true,
                         userDataObj: {
@@ -78,7 +61,8 @@ class App extends Component {
                        theId: user.data.id
 
 
-                    })
+                    },this.CheckCartOnLoad)
+                  
                     // console.log(this.state.userDataObj)
                     // console.log(this.state.theId);
                 } else {
@@ -87,8 +71,82 @@ class App extends Component {
                 }
             })
         }
-       
 
+       
+        
+   
+    }
+     CheckCartOnLoad =(noItems) =>{
+
+        if(localStorage.getItem('cartarray')==null){
+            console.log(this.state.theId)
+            cartApi.CheckCart(this.state.theId).then(data => {
+                console.log('i am in if ')
+                console.log(data,'after data')
+                console.log(data.data.length)
+              if(data.data.length !==0){
+                                        console.log('i am inyour mnom')
+                                        let numberOf=data.data.length
+                                        let priceArray=[];
+                                for(let i=0;i<numberOf;i++){
+                                
+                                  priceArray.push(data.data[i].price);
+                                }
+                                // console.log(priceArray)
+                                let cartamount = 0;
+                                for (let i = 0; i < priceArray.length; i++) {
+                                  cartamount += priceArray[i]
+                                }
+                                console.log(cartamount)
+                                
+                                        let cartitem = data.data.length;
+                                        this.setState({
+                                            cartItem:data.data.length,
+                                            cartarray:data.data
+                                        })
+                                        // console.log(cartitem)
+                                       console.log(cartitem)
+                                        let newcartarray = data.data;
+                                        this.setState({ cartItem: cartitem, cartAmount: cartamount, cartarray: newcartarray });
+                                       
+                                
+                                        localStorage.setItem('CartItem', cartitem);
+                                        localStorage.setItem('CartAmount', cartamount);
+                                        localStorage.setItem('cartarray', JSON.stringify(newcartarray));
+                                    } else if(data.length==0&&data.length >0){
+                                        this.setState({ cartarray: [] });
+                                    }
+                                }).catch(err=>console.log(err))
+                            
+            }
+       
+            
+                if (localStorage.getItem('CartItem')) {
+                    this.setState({ cartItem: parseInt(localStorage.getItem('CartItem')) });
+                }
+        
+                if (localStorage.getItem('CartAmount')) {
+                    this.setState({ cartAmount: parseInt(localStorage.getItem('CartAmount')) });
+                }
+        
+                if (localStorage.getItem('cartarray')) {
+                    if (localStorage.getItem('cartarray').length == 0) {
+                        this.setState({ cartarray: [] });
+                    } else {
+                        const tmp = JSON.parse(localStorage.getItem('cartarray'));
+                       // const tmp = []; //JSON.parse(null);
+                        this.setState({ cartarray: tmp });
+                    }
+                }
+    }
+    UpdateCartOnLoad=()=>{
+        if (localStorage.getItem('CartItem')) {
+            this.setState({ cartItem: parseInt(localStorage.getItem('CartItem')) });
+        }
+
+        if (localStorage.getItem('CartAmount')) {
+            this.setState({ cartAmount: parseInt(localStorage.getItem('CartAmount')) });
+        }
     }
     handleLoggedChange = (event, logged) => {
         this.setState({ logged: logged });
@@ -104,10 +162,30 @@ class App extends Component {
         this.setState({ userInput: event.target.value })
     }
 
-    handleClick = (i, j) => {
-        let cartitem = this.state.cartItem + 1;
-        let cartamount = this.state.cartAmount + i;
-        let newcartarray = this.state.cartarray.concat(j);
+    handleClick = (cartStuff) => {
+        console.log('i am here on load')
+        console.log( cartStuff.data[0].price)
+
+        let numberOf=cartStuff.data.length
+        let priceArray=[];
+for(let i=0;i<numberOf;i++){
+
+  priceArray.push(cartStuff.data[i].price);
+}
+// console.log(priceArray)
+let cartamount = 0;
+for (let i = 0; i < priceArray.length; i++) {
+  cartamount += priceArray[i]
+}
+console.log(cartamount)
+let cartitem = cartStuff.data.length;
+this.setState({
+    cartItem:cartStuff.data.length,
+    cartarray:cartStuff.data
+})
+// console.log(cartitem)
+console.log(cartitem)
+let newcartarray = cartStuff.data;
         this.setState({ cartItem: cartitem, cartAmount: cartamount, cartarray: newcartarray });
        
 
@@ -205,6 +283,7 @@ class App extends Component {
         const RoutedSearchedPage = (props) => {
             return ( 
                 <SearchedPage
+                UserId={this.state.theId}
                     component={CheckOutPage}
                     cartitem={this.state.cartItem}
                     cartamount={this.state.cartAmount}

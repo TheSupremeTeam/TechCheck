@@ -56,12 +56,13 @@ class ProductSearch extends Component {
 
             verified: "",
             status: "",
-            createdAt: ""
+            createdAt: "",
+            CartItems:[]
           
   }
   componentDidMount = () => {
 
-    console.log(this.props.match.params.category)
+   
     axios({
       method: 'post',
       url: `/api/products/category`,
@@ -80,9 +81,7 @@ class ProductSearch extends Component {
         })
       })
   }
-  // userId:this.props.match.params.id,
-
-  // productsApi.catagorySearch(this.props.match.params.category)
+ 
   console = () => {
     console.log(this.state.page)
     axios({
@@ -135,14 +134,17 @@ class ProductSearch extends Component {
   getProductId2=(e)=>{
     this.setState({
   productId:e.currentTarget.attributes.value.nodeValue
-    },this.getItemDate)
+    },this.CartBackend)
   }
   
   addToCart=()=>{
     this.props.onClick(this.state.price, this.state);
   }
-  
-  getItemDate=(e)=>{
+  addToCart2=()=>{
+    this.props.onClick(this.state.CartItems);
+  }
+  getItemData=(e)=>{
+    console.log(this.props)
     productsApi.Product(this.state.productId).then(data => {
       console.log(data)
       const photosImg = {
@@ -172,11 +174,34 @@ class ProductSearch extends Component {
           verified: data.data.verified,
           status: data.data.status,
           createdAt: data.data.createdAt
-      },this.addToCart)
+      },)
+      
   })
   console.log(this.state.productId)
 }
-  
+UpdateCart=()=>{
+  console.log('i am here ')
+  productsApi.CheckCart(this.props.UserId).then(data => {
+console.log(data)
+this.setState({
+  CartItems:data
+},this.addToCart2)
+  })
+}
+  CartBackend=()=>{
+ 
+    axios({
+      method: 'post',
+      url: `/api/products/cart`,
+      data: {
+        Product: this.state.productId,
+        user:this.props.UserId
+
+      }
+    }).then(next => {
+      this.UpdateCart();
+    })
+  }
   render() {
 
     return (
