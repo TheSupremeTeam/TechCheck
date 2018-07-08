@@ -154,7 +154,7 @@ class App extends Component {
                                     localStorage.setItem('cartarray', JSON.stringify(newcartarray));
                                 } else if(data.length==0&&data.length >0){
                                     this.setState({ cartarray: [] });
-                                }else if(localStorage.getItem('CartItem'))
+                                }
                             }).catch(err=>console.log(err))
        }
             
