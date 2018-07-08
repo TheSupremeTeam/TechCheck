@@ -18,6 +18,7 @@ import { UserProfile, UserProducts, verification, reset, resetPassword, emailSen
 import Search from '../src/Components/SearchedPage/SearchResults/search'
 import axios from "axios";
 import Receipt from '../src/Components/CheckOutPage/Receipt'
+import cartApi from '../src/Components/Data/products-api'
 import {List, ListItem} from 'material-ui/List';
 import MobileTearSheet from '.'
 import Divider from 'material-ui/Divider';
@@ -35,26 +36,7 @@ class App extends Component {
 
 
     componentDidMount = () => {
-
-    
-        // if (localStorage.getItem('CartItem')) {
-        //     this.setState({ cartItem: parseInt(localStorage.getItem('CartItem')) });
-        // }
-
-        // if (localStorage.getItem('CartAmount')) {
-        //     this.setState({ cartAmount: parseInt(localStorage.getItem('CartAmount')) });
-        // }
-
-        // if (localStorage.getItem('cartarray')) {
-        //     if (localStorage.getItem('cartarray').length == 0) {
-        //         this.setState({ cartarray: [] });
-        //     } else {
-        //         const tmp = JSON.parse(localStorage.getItem('cartarray'));
-        //        // const tmp = []; //JSON.parse(null);
-        //         this.setState({ cartarray: tmp });
-        //     }
-        // }
-
+     let theuser;
         if (sessionStorage.auth != null) {
             // console.log('auth')
 
@@ -68,6 +50,7 @@ class App extends Component {
             }).then(user => {
                 if (user != null) {
                     //console.log(user)
+             
                     this.setState({
                         logged: true,
                         userDataObj: {
@@ -78,7 +61,8 @@ class App extends Component {
                        theId: user.data.id
 
 
-                    })
+                    },this.CheckCartOnLoad)
+                  
                     // console.log(this.state.userDataObj)
                     // console.log(this.state.theId);
                 } else {
@@ -87,12 +71,82 @@ class App extends Component {
                 }
             })
         }
-        // [{"products":[{"id":"d623f7c9-fd81-11e7-9a91-0a2645a02380","userId":"35322927-4208-456d-a733-f911b03fa546",
-        // "productName":"GIGABYTE Z370 AORUS GAMING WIFI (rev. 1.0) LGA 1151 (300 Series) Intel Z370 HDMI SATA 6Gb/s USB 3.1 ATX Intel Motherboard","serialNumber":" N82E16813145043","category":"MotherBoard","price":126,"productDescription":"\n            Memory Standard: DDR4 4000(O.C.)/ 3866(O.C.)/ 3800(O.C.)/ 3733(O.C.)/ 3666(O.C.)/ 3600(O.C.)/ 3466(O.C.)/ 3400(O.C.)/ 3333(O.C.)/ 3300(O.C.)/ 3200(O.C.)/ 3000(O.C.)/ 2800(O.C.)/ 2666/ 2400/ 2133Number of Memory Slots: 4×288pinAudio Chipset: C","condition":"new","warranty":"no","packaging":"no","userUploadImage1":"13-145-043-V06.jpg","userUploadImage2":null,"verified":false,"status":"available","createdAt":"2018-01-20T01:32:54.000Z","updatedAt":"2018-01-20T01:32:54.000Z"},{"id":"d632e602-fd81-11e7-9a91-0a2645a02380","userId":"a5c2cd7b-93bf-483b-b943-02bf7cd3428c","productName":"ASUS Prime Z370-A LGA 1151 (300 Series) Intel Z370 HDMI SATA 6Gb/s USB 3.1 ATX Intel Motherboard","serialNumber":" N82E16813119038","category":"MotherBoard","price":141,"productDescription":"\n            Memory Standard: DDR4 4000(O.C)*/ 3866(O.C.)*/ 3733(O.C.)*/ 3600(O.C.)*/ 3466(O.C.)*/ 3400(O.C.)*/ 3333(O.C.)*/ 3300(O.C.)*/ 3200(O.C.)*/ 3000(O.C.)*/ 2800(O.C.)*/ 2666/ 2400/ 2133\n* Hyper DIMM support is subject to the physical characteristi","condition":"old","warranty":"yes","packaging":"yes","userUploadImage1":"13-119-038-V01.jpg","userUploadImage2":null,"verified":true,"status":"available","createdAt":"2018-01-20T01:32:54.000Z","updatedAt":"2018-01-20T01:32:54.000Z"},{"id":"d649501d-fd81-11e7-9a91-0a2645a02380","userId":"35322927-4208-456d-a733-f911b03fa546","productName":"ASUS Prime Z370-P LGA 1151 (300 Series) Intel Z370 HDMI SATA 6Gb/s USB 3.1 ATX Intel Motherboard","serialNumber":" N82E16813119039","category":"MotherBoard","price":117,"productDescription":"\n            Memory Standard: DDR4 4000(O.C.)*/ 3866(O.C.)*/ 3733(O.C.)*/ 3600(O.C.)*/ 3466(O.C.)*/ 3400(O.C.)*/ 3333(O.C.)*/ 3300(O.C.)*/ 3200(O.C.)*/ 3000(O.C.)*/ 2800(O.C.)*/ 2666/ 2400/ 2133\n*The maximum memory frequency supported varies by processorN","condition":"old","warranty":"yes","packaging":"yes","userUploadImage1":"13-119-039-V04.jpg","userUploadImage2":null,"verified":true,"status":"sold","createdAt":"2018-01-20T01:35:14.000Z","updatedAt":"2018-01-20T01:35:14.000Z"},{"id":"d658f080-fd81-11e7-9a91-0a2645a02380","userId":"b27abfc6-60c1-4569-ab17-650114bc6754","productName":"ASUS ROG STRIX B350-F GAMING AM4 AMD B350 SATA 6Gb/s USB 3.1 HDMI ATX AMD Motherboard","serialNumber":" N82E16813132988","category":"MotherBoard","price":109,"productDescription":"\n            Number of Memory Slots: 4×288pinMemory Standard: Ryzen Processors: DDR4 3200(O.C.)/ 2933(O.C.)/ 2666/ 2400/ 2133 *\n7th Generation A-series/Athlon Processors: DDR4 2400/ 2133 *\n* Hyper DIMM support is subject to the physical characteristics of","condition":"old","warranty":"no","packaging":"no","userUploadImage1":"13-132-988-V01.jpg","userUploadImage2":null,"verified":true,"status":"sold","createdAt":"2018-01-20T01:35:14.000Z","updatedAt":"2018-01-28T22:53:44.000Z"},{"id":"d666937b-fd81-11e7-9a91-0a2645a02380","userId":"b27abfc6-60c1-4569-ab17-650114bc6754","productName":"MSI B350 TOMAHAWK AM4 AMD B350 SATA 6Gb/s USB 3.1 HDMI ATX AMD Motherboard","serialNumber":" N82E16813144018","category":"MotherBoard","price":84,"productDescription":"\n            Number of Memory Slots: 4×288pinMemory Standard: DDR4 3200(OC)+/ 2933(OC)/ 2667(OC)/ 2400/ 2133/ 1866\n* 7th Gen A-series / Athlon processors support up to 2400 MHz.PCI Express 3.0 x16: 1 x PCIe 3.0 x16 slot (PCI_E2)\n- Supports x16 speed with ","condition":"old","warranty":"no","packaging":"no","userUploadImage1":"13-144-018-V02.jpg","userUploadImage2":null,"verified":true,"status":"available","createdAt":"2018-01-20T01:32:54.000Z","updatedAt":"2018-01-20T01:32:54.000Z"},{"id":"d67b906c-fd81-11e7-9a91-0a2645a02380","userId":"35322927-4208-456d-a733-f911b03fa546","productName":"MSI B350 GAMING PLUS AM4 AMD B350 SATA 6Gb/s USB 3.1 HDMI ATX AMD Motherboard","serialNumber":" N82E16813144047","category":"MotherBoard","price":85,"productDescription":"\n            Number of Memory Slots: 4×288pinMemory Standard: DDR4 3200(OC)+/ 2933(OC)/ 2667(OC)/ 2400/ 2133/ 1866\n* 7th Gen A-series/ Athlon processors support up to 2400 MHz.PCI Express 3.0 x16: 1 x PCIe 3.0 x16 slot (PCI_E2)\n- Supports x 16 speed with ","condition":"old","warranty":"no","packaging":"yes","userUploadImage1":"13-144-047-V01.jpg","userUploadImage2":null,"verified":true,"status":"sold","createdAt":"2018-01-20T01:32:54.000Z","updatedAt":"2018-01-28T22:53:44.000Z"},{"id":"d68908c5-fd81-11e7-9a91-0a2645a02380","userId":"5dfb8717-0aad-425e-8609-2bb47bdb40b5","productName":"MSI B350 PC MATE AM4 AMD B350 SATA 6Gb/s USB 3.1 HDMI ATX AMD Motherboard","serialNumber":" N82E16813144029","category":"MotherBoard","price":66,"productDescription":"\n            Number of Memory Slots: 4×288pinMemory Standard: DDR4 3200(OC)+/ 2933(OC)/ 2667(OC)/ 2400/ 2133/ 1866*\n* 7th Gen A-series/ Athlon processors support a maximum of DDR4 2400 MHz.PCI Express 3.0 x16: 1 x PCIe 3.0 x16 slot (PCI_E2)\n- Supports x16","condition":"old","warranty":"no","packaging":"yes","userUploadImage1":"13-144-029-Z01.jpg","userUploadImage2":null,"verified":true,"status":"sold","createdAt":"2018-01-20T01:35:14.000Z","updatedAt":"2018-01-20T01:35:14.000Z"},{"id":"d6971572-fd81-11e7-9a91-0a2645a02380","userId":"b27abfc6-60c1-4569-ab17-650114bc6754","productName":"MSI B350 GAMING PRO CARBON AM4 AMD B350 SATA 6Gb/s USB 3.1 HDMI ATX AMD Motherboard","serialNumber":" N82E16813144031","category":"MotherBoard","price":109,"productDescription":"\n            Number of Memory Slots: 4×288pinMemory Standard: DDR4 3200(OC)+/ 2933(OC)/ 2667(OC)/ 2400/ 2133/ 1866\n* 7th Gen A-series/ Athlon processors support up to 2400 MHz only.PCI Express 3.0 x16: 1 x PCIe 3.0 x16 slot (PCI_E2)\n- RYZEN series process","condition":"old","warranty":"no","packaging":"no","userUploadImage1":"13-144-031-V22.jpg","userUploadImage2":null,"verified":true,"status":"available","createdAt":"2018-01-20T01:32:55.000Z","updatedAt":"2018-01-20T01:32:55.000Z"},{"id":"d6a4c6a3-fd81-11e7-9a91-0a2645a02380","userId":"a5c2cd7b-93bf-483b-b943-02bf7cd3428c","productName":"MSI B350 TOMAHAWK ARCTIC AM4 AMD B350 SATA 6Gb/s USB 3.1 HDMI ATX Motherboards - AMD ","serialNumber":" N82E16813144028","category":"MotherBoard","price":94,"productDescription":"\n            Number of Memory Slots: 4×288pinMemory Standard: DDR4 3200(OC)+ / 2933(OC) / 2667(OC) / 2400 / 2133 / 1866\n* 7th Gen A-series/ Athlon processors support up to 2400 MHz.PCI Express 3.0 x16: 1 x PCIe 3.0 x16 slot (PCI_E2)\n- Supports x16 speed w","condition":"new","warranty":"yes","packaging":"no","userUploadImage1":"13-144-028-Z01.jpg","userUploadImage2":null,"verified":true,"status":"sold","createdAt":"2018-01-20T01:32:55.000Z","updatedAt":"2018-01-20T01:32:55.000Z"},{"id":"d6c141c1-fd81-11e7-9a91-0a2645a02380","userId":"35322927-4208-456d-a733-f911b03fa546","productName":"MSI B350 KRAIT GAMING AM4 AMD B350 SATA 6Gb/s USB 3.1 HDMI ATX AMD Motherboard","serialNumber":" N82E16813144025","category":"MotherBoard","price":93,"productDescription":"\n            Number of Memory Slots: 4×288pinMemory Standard: DDR4 3200(OC)+/ 2933(OC)/ 2667(OC)/ 2400/ 2133/ 1866 *\n* 7th Gen A-series/ Athlon processors support a maximum of 2400 MHz.PCI Express 3.0 x16: 1 x PCIe 3.0 x16 slots (PCIE_2)\n- RYZEN series pr","condition":"new","warranty":"no","packaging":"no","userUploadImage1":"13-144-025-V01.jpg","userUploadImage2":null,"verified":true,"status":"sold","createdAt":"2018-01-20T01:32:55.000Z","updatedAt":"2018-01-20T01:32:55.000Z"},{"id":"d6d038d5-fd81-11e7-9a91-0a2645a02380","userId":"b27abfc6-60c1-4569-ab17-650114bc6754","productName":"LIAN LI ALPHA 330W White SECC ATX Mid Tower Computer Case","serialNumber":" N82E16811112578","category":"MotherBoard","price":85,"productDescription":"\n            Motherboard Compatibility: ATXFront Ports: 2 x USB 3.0 / 1 x USB 3.1 (Type-C) / HD Audio120mm Fans: Rear: 1 x 120mm fan (included)\n\nTop: 3 x 140/120mm fan\n\nFront: 3 x 140/120mm fanPower Supply Mounted: Bottom\n            \n                Mode","condition":"old","warranty":"yes","packaging":"yes","userUploadImage1":"11-112-578-V19.jpg","userUploadImage2":null,"verified":true,"status":"available","createdAt":"2018-01-20T01:32:55.000Z","updatedAt":"2018-01-20T01:32:55.000Z"},{"id":"d6df82ba-fd81-11e7-9a91-0a2645a02380","userId":"5dfb8717-0aad-425e-8609-2bb47bdb40b5","productName":"LIAN LI ALPHA 330X Black SECC ATX Mid Tower Computer Case","serialNumber":" N82E16811112577","category":"MotherBoard","price":84,"productDescription":"\n            Motherboard Compatibility: ATXFront Ports: 2 x USB 3.0 / 1 x USB 3.1 (Type-C) / HD Audio120mm Fans: Top: 3 x 140/120mm fan (Optional)\n\nFront: 3 x 140/120mm fan (Optional)\n\nRear: 1 x 120mm fan (included)Power Supply Mounted: Bottom\n           ","condition":"old","warranty":"no","packaging":"no","userUploadImage1":"11-112-577-V11.jpg","userUploadImage2":null,"verified":true,"status":"sold","createdAt":"2018-01-20T01:35:14.000Z","updatedAt":"2018-01-20T01:35:14.000Z"},{"id":"d7126c70-fd81-11e7-9a91-0a2645a02380","userId":"a5c2cd7b-93bf-483b-b943-02bf7cd3428c","productName":"Phanteks Enthoo Pro M Series PH-ES515PTG_BK Brushed Black Steel frame / ABS Front / Tempered Glass Window ATX Mid Tower Computer Case","serialNumber":" N82E16811854042","category":"MotherBoard","price":84,"productDescription":"\n            Motherboard Compatibility: Micro ATX / ATX / Mini ITX / E-ATXFront Ports: 2 x USB 3.0 / 1 x Mic / 1 x Headphone120mm Fans: Top: 3 x 120mm / 2 x 140mm fanPower Supply Mounted: Bottom\n            \n                Model #: PH-ES515PTG_BK\n       ","condition":"old","warranty":"yes","packaging":"no","userUploadImage1":"11-854-042-V01.jpg",
-        // "userUploadImage2":null,"verified":true,"status":"sold","createdAt":"2018-01-20T01:35:14.000Z","updatedAt":"2018-01-20T01:35:14.000Z"},
-        // {"id":"d72187d4-fd81-11e7-9a91-0a2645a02380","userId":"a5c2cd7b-93bf-483b-b943-02bf7cd3428c","productName":"Phanteks Enthoo Pro M Series PH-ES515P_BK Black Steel / Plastic ATX Mid Tower Computer Case","serialNumber":" N82E16811854019","category":"MotherBoard","price":58,"productDescription":"\n            Motherboard Compatibility: Micro ATX / ATX / Mini ITX / E-ATX (up to 264mm wide)Front Ports: 2 x USB 3.0 / Mic / Headphone / Reset120mm Fans: Front: 2 x 120mm (3 x 120mm without ODD cage) or 2 x 140mm\nTop: 3 x 120mm or 2 x 140mmPower Supply M","condition":"old","warranty":"no","packaging":"no","userUploadImage1":"11-854-019-01.jpg","userUploadImage2":null,"verified":true,"status":"available","createdAt":"2018-01-20T01:32:55.000Z","updatedAt":"2018-01-20T01:32:55.000Z"},{"id":"d73137b0-fd81-11e7-9a91-0a2645a02380","userId":"35322927-4208-456d-a733-f911b03fa546","productName":"Phanteks ENTHOO Pro M PH-ES515PA_AG Anthracite Gray Steel / Plastic/Full Size Acrylic Window ATX Mid Tower Cases","serialNumber":" N82E16811854037","category":"MotherBoard","price":66,"productDescription":"\n            Motherboard Compatibility: Micro ATX / ATX / Mini ITX / E-ATXFront Ports: 2 x USB 3.0 / Mic / Headphone / Reset120mm Fans: Front: 2x (3x without ODD cage)\nTop: 3x\nRear: 1xSide Panel Window: Yes\n            \n                Model #: PH-ES515PA","condition":"old","warranty":"no","packaging":"no","userUploadImage1":"11-854-037-12.jpg","userUploadImage2":null,"verified":true,"status":"available","createdAt":"2018-01-20T01:32:56.000Z","updatedAt":"2018-01-20T01:32:56.000Z"}],"pages":0,"limit":15,"productId":"d623f7c9-fd81-11e7-9a91-0a2645a02380","userId":"35322927-4208-456d-a733-f911b03fa546","productName":"GIGABYTE Z370 AORUS GAMING WIFI (rev. 1.0) LGA 1151 (300 Series) Intel Z370 HDMI SATA 6Gb/s USB 3.1 ATX Intel Motherboard","serialNumber":" N82E16813145043","category":"MotherBoard","price":126,"productDescription":"\n            Memory Standard: DDR4 4000(O.C.)/ 3866(O.C.)/ 3800(O.C.)/ 3733(O.C.)/ 3666(O.C.)/ 3600(O.C.)/ 3466(O.C.)/ 3400(O.C.)/ 3333(O.C.)/ 3300(O.C.)/ 3200(O.C.)/ 3000(O.C.)/ 2800(O.C.)/ 2666/ 2400/ 2133Number of Memory Slots: 4×288pinAudio Chipset: C","condition":"new","warranty":"no","packaging":"no",
-        // "photos":[{"img1":"13-145-043-V06.jpg"},{"img2":null}],"verified":false,"status":"available","createdAt":"01-20-2018"}]
 
+       
+        
+   
+    }
+     CheckCartOnLoad =(noItems) =>{
+
+        if(localStorage.getItem('cartarray')==null){
+            console.log(this.state.theId)
+            cartApi.CheckCart(this.state.theId).then(data => {
+                console.log('i am in if ')
+                console.log(data,'after data')
+                console.log(data.data.length)
+              if(data.data.length !==0){
+                                        console.log('i am inyour mnom')
+                                        let numberOf=data.data.length
+                                        let priceArray=[];
+                                for(let i=0;i<numberOf;i++){
+                                
+                                  priceArray.push(data.data[i].price);
+                                }
+                                // console.log(priceArray)
+                                let cartamount = 0;
+                                for (let i = 0; i < priceArray.length; i++) {
+                                  cartamount += priceArray[i]
+                                }
+                                console.log(cartamount)
+                                
+                                        let cartitem = data.data.length;
+                                        this.setState({
+                                            cartItem:data.data.length,
+                                            cartarray:data.data
+                                        })
+                                        // console.log(cartitem)
+                                       console.log(cartitem)
+                                        let newcartarray = data.data;
+                                        this.setState({ cartItem: cartitem, cartAmount: cartamount, cartarray: newcartarray });
+                                       
+                                
+                                        localStorage.setItem('CartItem', cartitem);
+                                        localStorage.setItem('CartAmount', cartamount);
+                                        localStorage.setItem('cartarray', JSON.stringify(newcartarray));
+                                    } else if(data.length==0&&data.length >0){
+                                        this.setState({ cartarray: [] });
+                                    }
+                                }).catch(err=>console.log(err))
+                            
+            }
+       
+            
+                if (localStorage.getItem('CartItem')) {
+                    this.setState({ cartItem: parseInt(localStorage.getItem('CartItem')) });
+                }
+        
+                if (localStorage.getItem('CartAmount')) {
+                    this.setState({ cartAmount: parseInt(localStorage.getItem('CartAmount')) });
+                }
+        
+                if (localStorage.getItem('cartarray')) {
+                    if (localStorage.getItem('cartarray').length == 0) {
+                        this.setState({ cartarray: [] });
+                    } else {
+                        const tmp = JSON.parse(localStorage.getItem('cartarray'));
+                       // const tmp = []; //JSON.parse(null);
+                        this.setState({ cartarray: tmp });
+                    }
+                }
+    }
+    UpdateCartOnLoad=()=>{
+        if (localStorage.getItem('CartItem')) {
+            this.setState({ cartItem: parseInt(localStorage.getItem('CartItem')) });
+        }
+
+        if (localStorage.getItem('CartAmount')) {
+            this.setState({ cartAmount: parseInt(localStorage.getItem('CartAmount')) });
+        }
     }
     handleLoggedChange = (event, logged) => {
         this.setState({ logged: logged });
@@ -108,16 +162,36 @@ class App extends Component {
         this.setState({ userInput: event.target.value })
     }
 
-    handleClick = (i, j) => {
-        // let cartitem = this.state.cartItem + 1;
-        // let cartamount = this.state.cartAmount + i;
-        // let newcartarray = this.state.cartarray.concat(j);
-        // this.setState({ cartItem: cartitem, cartAmount: cartamount, cartarray: newcartarray });
+    handleClick = (cartStuff) => {
+        console.log('i am here on load')
+        console.log( cartStuff.data[0].price)
+
+        let numberOf=cartStuff.data.length
+        let priceArray=[];
+for(let i=0;i<numberOf;i++){
+
+  priceArray.push(cartStuff.data[i].price);
+}
+// console.log(priceArray)
+let cartamount = 0;
+for (let i = 0; i < priceArray.length; i++) {
+  cartamount += priceArray[i]
+}
+console.log(cartamount)
+let cartitem = cartStuff.data.length;
+this.setState({
+    cartItem:cartStuff.data.length,
+    cartarray:cartStuff.data
+})
+// console.log(cartitem)
+console.log(cartitem)
+let newcartarray = cartStuff.data;
+        this.setState({ cartItem: cartitem, cartAmount: cartamount, cartarray: newcartarray });
        
 
-        // localStorage.setItem('CartItem', cartitem);
-        // localStorage.setItem('CartAmount', cartamount);
-        // localStorage.setItem('cartarray', JSON.stringify(newcartarray));
+        localStorage.setItem('CartItem', cartitem);
+        localStorage.setItem('CartAmount', cartamount);
+        localStorage.setItem('cartarray', JSON.stringify(newcartarray));
 
     };
 

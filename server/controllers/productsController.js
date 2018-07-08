@@ -137,55 +137,60 @@ createdAt:createdOn
       })
       .catch(err => res.status(422).json(err));
   },
-  findCartItem:function(req,res){
+   findCartItem: async function(req,res){
  const myArray=[];
-    db.Carts.findAll({
-      where:{
-        UserId: req.params.user
+
+
+
+  let data = await db.Carts.findAll({
+      where: {
+          UserId: req.params.user
       }
-    }).then(data=>{
-     myArray.push(data[0].dataValues)
-  
-      // for(let i =0;i<data.length;i++){
-       
-        // db.Products.findOne({
-        //   where:{
-        //     id:data[0].dataValues.ProductInfo
-        //   }
-        // }).then(cartData=>{
+  });
+  for(let i =0;i<data.length;i++){
+  let cartData = await db.Products.findOne({
+      where: {
+          id: data[i].dataValues.ProductInfo
+      }
+  });
 
-// console.log(cartData.dataValues);
+  const createdOn = getDbDate(cartData.dataValues.createdAt);
+  const photosImg = {
+    img1: cartData.dataValues.userUploadImage1,
+    
+}
+const photosImg2 = {
+    img2: cartData.dataValues.userUploadImage2,
 
-//  const  createdOn=getDbDate(cartData.dataValues.createdAt);
- 
-// let theProduct={
-//   id:cartData.dataValues.id,
-//   userId:cartData.dataValues.userId,
-//   productName:cartData.dataValues.productName,
-//   serialNumber:cartData.dataValues.serialNumber,
-//   category:cartData.dataValues.category,
-//   price:cartData.dataValues.price,
-//   productDescription:cartData.dataValues.productDescription,
-//   condition:cartData.dataValues.condition,
-//   warranty:cartData.dataValues.warranty,
-//   packaging:cartData.dataValues.packaging,
-//   userUploadImage1:cartData.dataValues.userUploadImage1,
-//   userUploadImage2:cartData.dataValues.userUploadImage2,
-//   status:cartData.dataValues.status,
-//   verified:cartData.dataValues.verified,
-//   createdAt:createdOn
-// };
-// myArray.push(theProduct);
-// console.log(myArray)
-        // }) 
-        
-      // }
-      // res.send('thefuckingcart');
+}
+const imgs = [
+    photosImg,
+    photosImg2
+]
+  let theProduct = {
+    photos: imgs,
+      id: cartData.dataValues.id,
+      userId: cartData.dataValues.userId,
+      productName: cartData.dataValues.productName,
+      serialNumber: cartData.dataValues.serialNumber,
+      category: cartData.dataValues.category,
+      price: cartData.dataValues.price,
+      productDescription: cartData.dataValues.productDescription,
+      condition: cartData.dataValues.condition,
+      warranty: cartData.dataValues.warranty,
+      packaging: cartData.dataValues.packaging,
+     
+      status: cartData.dataValues.status,
+      verified: cartData.dataValues.verified,
+      createdAt: createdOn
+  };
+  myArray.push(theProduct)
+}
+  // console.log(myArray);
+  // console.log(data[1].dataValues);
+  res.send(myArray);
 
-      // console.log(data[1].dataValues)
-   
-    }).catch(err =>console.log(err));
-    console.log(myArray)
+
 // res.send(myArray);
   },
   addToCart:function(req,res){

@@ -56,7 +56,8 @@ class ProductSearch extends Component {
 
             verified: "",
             status: "",
-            createdAt: ""
+            createdAt: "",
+            CartItems:[]
           
   }
   componentDidMount = () => {
@@ -139,7 +140,9 @@ class ProductSearch extends Component {
   addToCart=()=>{
     this.props.onClick(this.state.price, this.state);
   }
-  
+  addToCart2=()=>{
+    this.props.onClick(this.state.CartItems);
+  }
   getItemData=(e)=>{
     console.log(this.props)
     productsApi.Product(this.state.productId).then(data => {
@@ -180,6 +183,9 @@ UpdateCart=()=>{
   console.log('i am here ')
   productsApi.CheckCart(this.props.UserId).then(data => {
 console.log(data)
+this.setState({
+  CartItems:data
+},this.addToCart2)
   })
 }
   CartBackend=()=>{
