@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import PaypalExpressBtn from 'react-pp-tc';
+import PaypalExpressBtn from 'react-paypal-express-checkout';
 import axios from 'axios'
 
 export default class PayPalButton extends Component {
