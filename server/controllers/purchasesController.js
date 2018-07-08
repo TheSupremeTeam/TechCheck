@@ -1,7 +1,7 @@
 import db from "../models"
 import sgMail from '@sendgrid/mail'
-import sendGridkey from '../../sendgrid'
-const sengrido =process.env.sendgrid ||sendGridkey
+// import sendGridkey from '../../sendgrid'
+const sengrido =process.env.sendgrid 
 sgMail.setApiKey(sengrido);
 const controller = {
   findId: (req, res) => {

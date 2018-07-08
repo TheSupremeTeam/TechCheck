@@ -1,7 +1,7 @@
- import sendGridkey from '../../sendgrid.js'
+//  import sendGridkey from '../../sendgrid.js'
 import db from "../models"
 import bcrypt from'bcrypt'
-import jwtSecret from '../../jwtSecret'
+// import jwtSecret from '../../jwtSecret'
 import sgMail from '@sendgrid/mail'
 import jwt, { verify } from 'jsonwebtoken'
 import moment from 'moment';
