@@ -119,7 +119,44 @@ class App extends Component {
                                 }).catch(err=>console.log(err))
                             
             }
-       
+            console.log(this.state.cartItem)
+       if(localStorage.getItem('CartItem') !== this.state.cartitem){
+        cartApi.CheckCart(this.state.theId).then(data => {
+        
+          if(data.data.length !==0){
+                                    console.log('i am inyour mnom')
+                                    let numberOf=data.data.length
+                                    let priceArray=[];
+                            for(let i=0;i<numberOf;i++){
+                            
+                              priceArray.push(data.data[i].price);
+                            }
+                            // console.log(priceArray)
+                            let cartamount = 0;
+                            for (let i = 0; i < priceArray.length; i++) {
+                              cartamount += priceArray[i]
+                            }
+                            console.log(cartamount)
+                            
+                                    let cartitem = data.data.length;
+                                    this.setState({
+                                        cartItem:data.data.length,
+                                        cartarray:data.data
+                                    })
+                                    // console.log(cartitem)
+                                   console.log(cartitem)
+                                    let newcartarray = data.data;
+                                    this.setState({ cartItem: cartitem, cartAmount: cartamount, cartarray: newcartarray });
+                                   
+                            
+                                    localStorage.setItem('CartItem', cartitem);
+                                    localStorage.setItem('CartAmount', cartamount);
+                                    localStorage.setItem('cartarray', JSON.stringify(newcartarray));
+                                } else if(data.length==0&&data.length >0){
+                                    this.setState({ cartarray: [] });
+                                }else if(localStorage.getItem('CartItem'))
+                            }).catch(err=>console.log(err))
+       }
             
                 if (localStorage.getItem('CartItem')) {
                     this.setState({ cartItem: parseInt(localStorage.getItem('CartItem')) });
@@ -164,7 +201,7 @@ class App extends Component {
 
     handleClick = (cartStuff) => {
         console.log('i am here on load')
-        console.log( cartStuff.data[0].price)
+    
 
         let numberOf=cartStuff.data.length
         let priceArray=[];

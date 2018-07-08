@@ -39,12 +39,13 @@ class Login extends Component {
 
 
     onSubmit = () => {
+    let lowerCaseEmail=this.state.email.toLowerCase()
         const self = this;
         axios({
             method: 'post',
             url: '/api/users/signIn',
             data: {
-                email: this.state.email,
+                email:lowerCaseEmail ,
                 pass: this.state.pass,
             },
         })
