@@ -74,7 +74,7 @@ class ProductSearch extends Component {
       }
     })
       .then(products => {
-        console.log(products)
+      
         this.setState({
           products: products.data,
 
@@ -83,7 +83,7 @@ class ProductSearch extends Component {
   }
  
   console = () => {
-    console.log(this.state.page)
+   
     axios({
       method: 'post',
       url: `/api/products/category`,
@@ -94,10 +94,10 @@ class ProductSearch extends Component {
 
       }
     }).then(next => {
-      console.log(next)
+      
       this.setState({
         products: next.data
-      }, console.log(this.state.products))
+      }, )
 
     })
   }
@@ -144,9 +144,9 @@ class ProductSearch extends Component {
     this.props.onClick(this.state.CartItems);
   }
   getItemData=(e)=>{
-    console.log(this.props)
+   
     productsApi.Product(this.state.productId).then(data => {
-      console.log(data)
+ 
       const photosImg = {
           img1: data.data.userUploadImage1,
           
@@ -177,12 +177,12 @@ class ProductSearch extends Component {
       },)
       
   })
-  console.log(this.state.productId)
+
 }
 UpdateCart=()=>{
-  console.log('i am here ')
+
   productsApi.CheckCart(this.props.UserId).then(data => {
-console.log(data)
+
 this.setState({
   CartItems:data
 },this.addToCart2)

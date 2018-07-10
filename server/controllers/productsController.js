@@ -125,12 +125,27 @@ console.log('hrll',newo)
         }
       })
       .then(dbModel =>{
-console.log(dbModel.length)
+
        
         res.send(dbModel)
       })
       .catch(err => res.status(422).json(err));
   },
+
+  deleteFromCart: function(req, res) {
+       console.log(req.body)
+       db.Carts.destroy({
+         where:{
+          ProductInfo:req.body.product,
+          UserId:req.body.user
+         }
+       }).then(data=>{
+         console.log(data)
+        res.send('product Deleted')
+       })
+      
+  },
+
   findById: function(req, res) {
 
     db.Products.findOne({

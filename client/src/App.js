@@ -104,11 +104,11 @@ if(changeSource===true){
       })
 }
 
-        if(localStorage.getItem('cartarray')==null){
+        // if(localStorage.getItem('cartarray')==null){
             
             cartApi.CheckCart(this.state.theId).then(data => {
                
-              if(data.data.length !==0){
+            //   if(data.data.length !==0){
                                         console.log('i am inyour mnom')
                                         let numberOf=data.data.length
                                         let priceArray=[];
@@ -136,14 +136,15 @@ if(changeSource===true){
                                         localStorage.setItem('CartItem', cartitem);
                                         localStorage.setItem('CartAmount', cartamount);
                                         localStorage.setItem('cartarray', JSON.stringify(newcartarray));
-                                    } else if(data.length==0&&data.length >0){
-                                        this.setState({ cartarray: [] });
-                                    }
+                                    // } 
+                                    // else if(data.length==0&&data.length >0){
+                                    //     this.setState({ cartarray: [] });
+                                    // }
                                 }).catch(err=>console.log(err))
                             
-            }
+            // }
           
-       if(localStorage.getItem('CartItem') !== this.state.cartitem){
+    //    if(localStorage.getItem('CartItem') !== this.state.cartitem){
         cartApi.CheckCart(this.state.theId).then(data => {
         
           if(data.data.length !==0){
@@ -179,7 +180,7 @@ if(changeSource===true){
                                     this.setState({ cartarray: [] });
                                 }
                             }).catch(err=>console.log(err))
-       }
+       
             
                 if (localStorage.getItem('CartItem')) {
                     this.setState({ cartItem: parseInt(localStorage.getItem('CartItem')) });
@@ -256,12 +257,60 @@ let newcartarray = cartStuff.data;
 
     };
 
-    handleDelete = (productId,amount, k,) => {
+    handleDelete =async (productId,amount, k,) => {
         console.log(productId
             
             )
-            console.log(k)
+            console.log(this.state.theId)
         console.log(k.anchorEl.attributes.cartarray.nodeValue      )
+        if(this.state.theId != null){
+            console.log('here in your moms ')
+let theData= await axios({
+    method: 'post',
+    url: '/api/products/delete/cart',
+    data: { user:this.state.theId,
+        product:productId
+       
+
+    }
+        })
+        console.log(theData)
+        if(theData.data==='product Deleted'){
+         cartApi.CheckCart(this.state.theId).then(data => {
+          
+                let numberOf=data.data.length
+                let priceArray=[];
+        for(let i=0;i<numberOf;i++){
+        
+          priceArray.push(data.data[i].price);
+        }
+        // console.log(priceArray)
+        let cartamount = 0;
+        for (let i = 0; i < priceArray.length; i++) {
+          cartamount += priceArray[i]
+        }
+       
+        
+                let cartitem = data.data.length;
+                this.setState({
+                    cartItem:data.data.length,
+                    cartarray:data.data
+                })
+                // console.log(cartitem)
+           
+                let newcartarray = data.data;
+                this.setState({ cartItem: cartitem, cartAmount: cartamount, cartarray: newcartarray });
+          
+        
+                localStorage.setItem('CartItem', cartitem);
+                localStorage.setItem('CartAmount', cartamount);
+                localStorage.setItem('cartarray', JSON.stringify(newcartarray));
+    })
+}
+        }
+        else{
+
+      
         let newcartarray = this.state.cartarray.slice();
         let cartitemindex = newcartarray.indexOf(k);
         let cartamount = this.state.cartAmount-parseInt(amount);
@@ -287,7 +336,7 @@ let newcartarray = cartStuff.data;
                 cartarray: [],
             })
         }
-   
+     }
     };
 
     render() {
