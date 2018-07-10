@@ -19,6 +19,7 @@ export default path => {
   app.use("/api/users", routers.users);
   app.use("/api/products", routers.products);
   app.use("/api/purchases", routers.purchases);
+  app.use("api/carts",routers.carts);
   // Any non API GET routes will be directed to our React App and handled by React Router
   app.get("*", (req, res) => {
     res.sendFile(`${path}/client/index.html`);

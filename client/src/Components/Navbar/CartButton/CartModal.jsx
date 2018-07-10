@@ -80,7 +80,7 @@ class CartModal extends Component {
     static muiName = 'FlatButton';
 
     handleDelete = (k) => {
-
+console.log(k,'hey')
         let newcartarray = this.state.cartarray.slice();
         let cartitemindex = newcartarray.indexOf(k);
         let cartamount = this.state.cartAmount - k.author;
@@ -97,16 +97,17 @@ class CartModal extends Component {
             return (
                 <MenuItem key={step.productId} style={{ fontSize: '12px', textAlign: 'center' }}>
                     <Row>
-                        
+                
                         <Col sm={4}>
+                       
                             <Avatar  src={`https://s3-us-west-1.amazonaws.com/techcheckbucket/${step.photos[0].img1}`} style={{ position: 'relative', top: '10px', right: '5px' }} />
                         </Col>
                         <Col sm={6}>
                             <div style={{ position: 'relative', top: '4px', right: '12px' }}>
-                                Price: {step.price}
+                                Price: {step.price} 
                             </div>
-                        </Col>{ }
-                        <Col sm={2} onClick={() => this.props.onDelete(step.price, this.state)}  >
+                        </Col>
+                        <Col sm={2} onClick={() => this.props.onDelete(step.id,step.price, this.state)}  >
                             <CancelIcon style={{ position: 'relative', top: '14px', right: '10px' }} />
                         </Col>
                     </Row>
@@ -127,7 +128,7 @@ class CartModal extends Component {
 
         return (
             <div>
-                {console.log(this.props)}
+               
                 <div>
                     <FlatButton {...this.props} title='cart' style={style} onClick={this.handleClick} >
                         <img src={logo} alt="shopping cart" /> <span style={{ position: 'relative', bottom: '11px', left: '-20.5px', color: 'white' }}> {this.props.cartitem}</span>

@@ -42,7 +42,7 @@ class Navbar extends Component {
       })
   }
   onsubmit = () => {
-    console.log(this.state.search)
+
     window.location = `/searchResults/${this.state.search}`
   }
   componentDidMount = () => {
@@ -101,6 +101,9 @@ class Navbar extends Component {
     } else if (this.state.userEmail === 'Outlook.com' || '@live.com' || '@msn.com') {
       email = <a href='https://login.live.com/login.srf?wa=wsignin1.0&rpsnv=13&ct=1517256493&rver=6.7.6640.0&wp=MBI_SSL&wreply=https%3a%2f%2foutlook.live.com%2fowa%2f%3fRpsCsrfState%3df12b20f0-5350-42ba-2520-eb9549b24978&id=292841&whr=gmail.com&CBCXT=out&lw=1&fl=dob%2cflname%2cwld&cobrandid=90015'>Outlook.com/Msm.com/Live.com</a>
     }
+    else{
+      email=<p></p>
+    }
     return (
       <div>
         {!this.props.userdata.verified && this.props.logged &&
@@ -111,58 +114,21 @@ class Navbar extends Component {
             </div>
           </div>
         }
-       
+   
         <AppBar
         
           title={<img onClick={this.goHome} src="https://i.imgur.com/heRuT1H.png" alt="TClogo" style={{ margin: 'auto', maxWidth: '100%', height: '80px', marginLeft: '150px' }} />}
           style={{ backgroundColor: "#2196F3", }}
           showMenuIconButton={false}
-          iconElementRight={this.props.logged ? <LoggedInButton userdata={this.props.userdata} logout={this.props.logoutFunction} /> : <LoginButton />}
+          iconElementRight={this.props.logged ? <LoggedInButton userdata={this.props.userdata} photoSource={this.props.photoSource} logout={this.props.logoutFunction} /> : <LoginButton />}
         >
-        {/* <Drawer docked={false}
-          width={200} open={this.state.open} zDepth={1}>
-          <MenuItem><h1>Categories</h1></MenuItem><br/>
-          <MenuItem>Graphic Cards</MenuItem>
-          <MenuItem>Processors</MenuItem>
-          <MenuItem>Processors</MenuItem>
-          <MenuItem>Motherboards</MenuItem>
-          <MenuItem>RAM</MenuItem>
-          <MenuItem>Power Supply</MenuItem>
-          <MenuItem>Computer Cases</MenuItem>
-          <MenuItem>Gaming Peripherals </MenuItem>
-          <MenuItem>Laptops</MenuItem>
-        
-          <MenuItem>Game Consoles</MenuItem>
-        </Drawer> */}
+     
         
           <CartModal cartitem={this.props.cartitem} cartamount={this.props.cartamount} cartarray={this.props.cartarray}
             onClick={this.props.onClick} onDelete={this.props.onDelete}
           />
         </AppBar>
-        {/* <div className='drawer'>
-       
- 
-       <MobileTearSheet>
-          <List>
-          Categories
-          <ListItem primaryText="Categories" />
-          <Divider />
-            <ListItem primaryText="Graphic Cards" />
-      
-            <ListItem primaryText="Processors"  />
-            <ListItem primaryText="Hard Drives"  />
-            <ListItem primaryText="Motherboards"  />
-            <ListItem primaryText="RAM"  />
-            <ListItem primaryText="Power Supply" />
-            <ListItem primaryText="Computer Cases"  />
-            <ListItem primaryText="Gaming Peripherals Mice, Keyboards, Headsets"  />
-            <ListItem primaryText="Laptops"  />
-            <ListItem primaryText="Game Consoles"  />
-          </List>
-         
-         
-        </MobileTearSheet>
-              </div> */}
+     
         {<SearchBar
           value={this.state.search}
           name='search'

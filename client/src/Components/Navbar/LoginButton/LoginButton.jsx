@@ -58,9 +58,9 @@ class Login extends Component {
 
                 }
                 else {
-                    console.log(res)
+                 
                     sessionStorage.setItem('auth', res.data)
-                    self.handleClose()
+                    self.handleClose();
                     window.location.reload(true);
                 }
             }).catch(function (error) {

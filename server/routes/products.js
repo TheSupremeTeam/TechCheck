@@ -11,14 +11,15 @@ import multerS3 from 'multer-s3'
 //||s3Key
 const router = express.Router();
 aws.config.update({
-    accessKeyId:process.env.s3_key,
-    secretAccessKey: process.env.s3_secret
+  accessKeyId:process.env.s3_key||"AKIAIDIKIIPCDQHRVSGA",
+    secretAccessKey: process.env.s3_secret||"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"
   });
+  // techcheckbucket
 const s3 = new aws.S3();
 const upload = multer({
     storage: multerS3({
       s3: s3,
-      bucket: 'techcheckbucket',
+      bucket: 'techcheckphotos',
       acl: 'public-read',
       key: function (req, file, cb) {
         cb(null, file.originalname); //use Date.now() for unique file keys
@@ -40,7 +41,8 @@ router.post("/", products.create);
 router.put("/:id", products.update);
 router.delete("/:id", products.remove);
 router.post('/search',products.search);
-router.post('/cart',products.addToCart)
+router.post('/cart',products.addToCart);
+
 router.post('/upload', upload.array('upl', 1), function (req, res, next) {
     res.send("Uploaded!");
   });

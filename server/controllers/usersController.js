@@ -8,7 +8,7 @@ import moment from 'moment';
 // || jwtSecret;
 
 // ||sendGridkey;
-const secret = process.env.jwt
+const secret = process.env.jwt||'5454554545'
 const saltRounds =10;
 const sengrido =process.env.sendgrid 
 sgMail.setApiKey(sengrido);

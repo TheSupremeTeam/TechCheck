@@ -22,11 +22,11 @@ const loggedIn = (props) => {
   >
   {/* {console.log(props.userdata.userId)} */}
 
-    <MenuItem href={`/profile/${props.userdata.userId}`}
+    <MenuItem href={`/profile/${props.userdata.userId}`}>
 
-    >
+
       {props.userdata.firstName + ' ' + props.userdata.lastName}
-      <Avatar src={`https://s3-us-west-1.amazonaws.com/techcheckbucket/${props.userdata.profilePic}`}
+      <Avatar src={`${props.photoSource}${props.userdata.profilePic}`}
         size={30}
         style={{ display: 'in-line', margin: 'auto', position: 'relative', left: '16px', top: '7px' }}
       />

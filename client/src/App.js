@@ -31,7 +31,11 @@ class App extends Component {
         theId: '',
         logged: false,
         userInput: '',
-        dataSource: ''
+        userCreatedAt:'',
+        thePhotoSource: "https://s3-us-west-1.amazonaws.com/techcheckphotos/",
+        dataSource:'',
+        TimeOfDate:false,
+
     };
 
 
@@ -50,7 +54,8 @@ class App extends Component {
             }).then(user => {
                 if (user != null) {
                     //console.log(user)
-             
+             console.log(user)
+            
                     this.setState({
                         logged: true,
                         userDataObj: {
@@ -58,7 +63,8 @@ class App extends Component {
                             profilePic: user.data.profilePic, userId: user.data.id, firstName: user.data.firstName,
                             lastName: user.data.lastName, active: user.data.active, verified: user.data.verified
                         },
-                       theId: user.data.id
+                       theId: user.data.id,
+                       userCreatedAt:user.data.createdAt
 
 
                     },this.CheckCartOnLoad)
@@ -66,8 +72,7 @@ class App extends Component {
                     // console.log(this.state.userDataObj)
                     // console.log(this.state.theId);
                 } else {
-                    console.log('no token')
-                    console.log('here auth failed')
+                  
                 }
             })
         }
@@ -76,14 +81,33 @@ class App extends Component {
         
    
     }
+    changePhotoSource=(dataSource)=>{
+        
+        const monthsArray=['01','02','03','04','05','06'];
+        let dateSplit=  this.state.userCreatedAt.split(' ');
+    
+       for(let i=0;i<monthsArray.length;i++){
+         
+         if(dateSplit[0]==monthsArray[i]&&dateSplit[2]=='2018'){
+          
+      return true
+         }
+       }
+ 
+//    console.log( dateSplit)
+    }
      CheckCartOnLoad =(noItems) =>{
+let changeSource =this.changePhotoSource(this.state.userCreatedAt);
+if(changeSource===true){
+    this.setState({
+        thePhotoSource:"https://s3-us-west-1.amazonaws.com/techcheckbucket/"
+      })
+}
 
         if(localStorage.getItem('cartarray')==null){
-            console.log(this.state.theId)
+            
             cartApi.CheckCart(this.state.theId).then(data => {
-                console.log('i am in if ')
-                console.log(data,'after data')
-                console.log(data.data.length)
+               
               if(data.data.length !==0){
                                         console.log('i am inyour mnom')
                                         let numberOf=data.data.length
@@ -97,15 +121,14 @@ class App extends Component {
                                 for (let i = 0; i < priceArray.length; i++) {
                                   cartamount += priceArray[i]
                                 }
-                                console.log(cartamount)
+                                
                                 
                                         let cartitem = data.data.length;
                                         this.setState({
                                             cartItem:data.data.length,
                                             cartarray:data.data
                                         })
-                                        // console.log(cartitem)
-                                       console.log(cartitem)
+                                     
                                         let newcartarray = data.data;
                                         this.setState({ cartItem: cartitem, cartAmount: cartamount, cartarray: newcartarray });
                                        
@@ -119,12 +142,12 @@ class App extends Component {
                                 }).catch(err=>console.log(err))
                             
             }
-            console.log(this.state.cartItem)
+          
        if(localStorage.getItem('CartItem') !== this.state.cartitem){
         cartApi.CheckCart(this.state.theId).then(data => {
         
           if(data.data.length !==0){
-                                    console.log('i am inyour mnom')
+                                  
                                     let numberOf=data.data.length
                                     let priceArray=[];
                             for(let i=0;i<numberOf;i++){
@@ -136,7 +159,7 @@ class App extends Component {
                             for (let i = 0; i < priceArray.length; i++) {
                               cartamount += priceArray[i]
                             }
-                            console.log(cartamount)
+                           
                             
                                     let cartitem = data.data.length;
                                     this.setState({
@@ -144,7 +167,7 @@ class App extends Component {
                                         cartarray:data.data
                                     })
                                     // console.log(cartitem)
-                                   console.log(cartitem)
+                               
                                     let newcartarray = data.data;
                                     this.setState({ cartItem: cartitem, cartAmount: cartamount, cartarray: newcartarray });
                                    
@@ -192,7 +215,8 @@ class App extends Component {
 
     logOutHandler = () => {
         this.setState({ logged: false });
-        sessionStorage.removeItem('auth')
+        sessionStorage.removeItem('auth');
+        localStorage.clear();
     }
 
     userInputHandlerlogged = (event) => {
@@ -200,7 +224,7 @@ class App extends Component {
     }
 
     handleClick = (cartStuff) => {
-        console.log('i am here on load')
+       
     
 
         let numberOf=cartStuff.data.length
@@ -209,19 +233,19 @@ for(let i=0;i<numberOf;i++){
 
   priceArray.push(cartStuff.data[i].price);
 }
-// console.log(priceArray)
+
 let cartamount = 0;
 for (let i = 0; i < priceArray.length; i++) {
   cartamount += priceArray[i]
 }
-console.log(cartamount)
+
 let cartitem = cartStuff.data.length;
 this.setState({
     cartItem:cartStuff.data.length,
     cartarray:cartStuff.data
 })
-// console.log(cartitem)
-console.log(cartitem)
+
+
 let newcartarray = cartStuff.data;
         this.setState({ cartItem: cartitem, cartAmount: cartamount, cartarray: newcartarray });
        
@@ -232,7 +256,12 @@ let newcartarray = cartStuff.data;
 
     };
 
-    handleDelete = (amount, k) => {
+    handleDelete = (productId,amount, k,) => {
+        console.log(productId
+            
+            )
+            console.log(k)
+        console.log(k.anchorEl.attributes.cartarray.nodeValue      )
         let newcartarray = this.state.cartarray.slice();
         let cartitemindex = newcartarray.indexOf(k);
         let cartamount = this.state.cartAmount-parseInt(amount);
@@ -262,7 +291,7 @@ let newcartarray = cartStuff.data;
     };
 
     render() {
-    
+      
 
         /* below Routed.... components are created to pass down props to routed component */
         const RoutedMainPage = (props) => {
@@ -271,7 +300,9 @@ let newcartarray = cartStuff.data;
                     cartitem={this.state.cartItem}
                     cartamount={this.state.cartAmount}
                     cartarray={this.state.cartarray}
-                    onClick={this.handleClick} {...props }
+                    onClick={this.handleClick} 
+                    photoSource={this.state.dataSource}
+                    {...props }
                 />
             );
         }
@@ -280,12 +311,9 @@ let newcartarray = cartStuff.data;
 
         const RoutedProfilePage = (props) => {
             //console.log(this.state.theId);
-
-            return (
+             return (
                 
-                <UserProfile theuserid={this.state.theId} component={UserProfile} {...props}
-
-                />
+                <UserProfile theuserid={this.state.theId} photoSource={this.state.thePhotoSource} component={UserProfile} {...props}/>
             )
         }
         const RoutedProductDetailPage = (props) => {
@@ -351,10 +379,10 @@ let newcartarray = cartStuff.data;
                 <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)} >
                     <div className="App" >
                     
-{/* // {console.log(this.state.userDataObj)} */}
+
                         <Navbar 
-                        //  ref={(this.state.userDataObj) => { this.state.userDataObj = ; }}
-                        
+                     
+                        photoSource={this.state.thePhotoSource}
                         userdata={this.state.userDataObj}
                             dataSource={this.state.dataSource}
                             userInput={this.state.userInput}

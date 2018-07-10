@@ -26,7 +26,7 @@ class UserProfile extends Component {
     phoneNumber: "",
     edit: false,
     noUser: false,
-    
+    TimeOfDate:false
   }
  
   changedToEdit = () => {
@@ -67,8 +67,9 @@ data: {userId:this.state.userId,firstName:this.state.firstName,lastName:this.sta
       
     }
   }
+ 
   componentWillReceiveProps=(props)=>{
-   
+
     users.userProfile(props.theuserid).then(dataPoints => {
       
       if (dataPoints.data === 'noUser') {
@@ -100,24 +101,30 @@ data: {userId:this.state.userId,firstName:this.state.firstName,lastName:this.sta
         })
       }
     });
+   
+
   }
- 
+
 
   render() {
+   
+
+   
     return (
    
       <div className="profile">
-    
+    {this.props.TimeOfDate}
         <Paper className='Paper'>
         <h3 style={{margin:'0 auto', padding: '15px 0'}}>User Profile</h3>
 
           {this.state.noUser &&
             <h1>404 No User Found</h1>
           }
-         
+      
+          
           {/* {!this.state.edit ? */}
           {!this.state.notPRofile ?
-          <Avatar size={150} onChange={this.onChange} src={`https://s3-us-west-1.amazonaws.com/techcheckbucket/${this.state.profilePic }`} />: <Avatar size={150} onChange={this.onChange} src={notFound} />}
+          <Avatar size={150} onChange={this.onChange} src={`${this.props.photoSource}${this.state.profilePic }`} />: <Avatar size={150} onChange={this.onChange} src={notFound} />}
           {/* // {<div><input type='file' ></input> <br/></div>} */}
 
           <div className='UserInfo'>
