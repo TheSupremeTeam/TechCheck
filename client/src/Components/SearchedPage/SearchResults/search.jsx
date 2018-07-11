@@ -59,6 +59,7 @@ class ProductSearch extends Component {
       autoHideDuration2: 4000,
       message2:'',
       open2: false,
+      CartItems:[]
    
   }
   componentDidMount = () => {
@@ -119,10 +120,8 @@ class ProductSearch extends Component {
       productId: e.currentTarget.attributes.value.nodeValue,
       open: true,
       priceDelete:e.currentTarget.attributes.price.nodeValue,
-     
-    
       message2:'Item removed from your cart'
-    }, this.getItemDate)
+    }, this.CartBackend)
 
   }
 
@@ -136,7 +135,33 @@ class ProductSearch extends Component {
      
     });
   }
+  addToCart2=()=>{
+    this.props.onClick(this.state.CartItems);
+  }
+  UpdateCart=()=>{
+console.log(this.props)
+    productsApi.CheckCart(this.props.UserId).then(data => {
+  
+  this.setState({
+    CartItems:data
+  },this.addToCart2)
+    })
+  }
 
+  CartBackend=()=>{
+ console.log(this.state.productId)
+    axios({
+      method: 'post',
+      url: `/api/products/cart`,
+      data: {
+        Product: this.state.productId,
+        user:this.props.UserId
+
+      }
+    }).then(next => {
+      this.UpdateCart();
+    })
+  }
   getItemDate = (e) => {
    console.log(this.state.theItem)
     productsApi.Product(this.state.productId).then(data => {
@@ -208,6 +233,8 @@ class ProductSearch extends Component {
     this.setState({
       open: false,
     });
+    this.state.CartBackend(); 
+    
     this.props.onClick(this.state.price, this.state);
    
   this.setState({
@@ -221,7 +248,7 @@ class ProductSearch extends Component {
     this.setState({
       open: false,
     });
-    this.props.handleDelete(this.state.priceDelete)
+    this.props.handleDelete(this.state.productId, this.state.priceDelete)
 
   this.setState({
     priceDelete:'',

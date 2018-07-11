@@ -257,12 +257,11 @@ let newcartarray = cartStuff.data;
 
     };
 
-    handleDelete =async (productId,amount, k,) => {
+    handleDelete =async (productId,amount, k) => {
         console.log(productId
             
             )
-            console.log(this.state.theId)
-        console.log(k.anchorEl.attributes.cartarray.nodeValue      )
+     
         if(this.state.theId != null){
             console.log('here in your moms ')
 let theData= await axios({
@@ -410,6 +409,7 @@ let theData= await axios({
         const RoutedSearch = (props) => {
             return ( 
                 <Search
+                UserId={this.state.theId}
                     component={CheckOutPage}
                     cartitem={this.state.cartItem}
                     cartamount={this.state.cartAmount}

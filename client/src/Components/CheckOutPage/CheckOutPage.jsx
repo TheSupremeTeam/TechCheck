@@ -72,7 +72,7 @@ class checkOutPage extends Component {
                               
                                 <FlatButton
                                     label='Remove'
-                                    onClick={() => this.props.handleDelete(card.price,  this.props)}
+                                    onClick={() => this.props.handleDelete(card.id, card.price,  this.props)}
                                     style={
                                         {
                                             backgroundColor: '#DC4C46',
