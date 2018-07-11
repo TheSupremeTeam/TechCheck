@@ -224,6 +224,7 @@ console.log(this.props)
   handleRequestClose = () => {
     this.setState({
       open: false,
+      open2:false
     });
   };
   getPrice=(e)=>{
@@ -233,9 +234,9 @@ console.log(this.props)
     this.setState({
       open: false,
     });
-    this.state.CartBackend(); 
-    
-    this.props.onClick(this.state.price, this.state);
+    // this.state.CartBackend(); 
+
+    // this.props.onClick(this.state.price, this.state);
    
   this.setState({
     priceDelete:'',
@@ -279,8 +280,8 @@ console.log(this.props)
         <Snackbar
           open={this.state.open2}
           message={this.state.message2}
-          action="undo"
-           autoHideDuration={this.state.autoHideDuration2}
+          action=""
+           autoHideDuration={3000}
            
            onActionClick={this.handleActionClick2}
            onRequestClose={this.handleRequestClose}
