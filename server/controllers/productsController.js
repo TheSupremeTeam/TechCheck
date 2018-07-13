@@ -343,7 +343,12 @@ console.log('hrll',newo)
         ]
         }
         }).then(products=>{
-          res.send(products)
+          for(let i=0;i <600;i++){
+            let o=0
+          }
+          setTimeout(()=>      res.send(products) , 1000);
+           
+     
         })
       
       },

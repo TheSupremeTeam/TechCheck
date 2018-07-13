@@ -7,7 +7,7 @@ import axios from "axios";
 import validator from 'validator';
 
 import DatePicker from 'material-ui/DatePicker';
-
+import Dialog from 'material-ui/Dialog';
 
 
 const required = (value) => {
@@ -83,7 +83,9 @@ class addUser extends React.Component {
             formValid: false,
             noMatch: true,
             passRequire:true,
-            rows:2
+            rows:2,
+            countDown:10,
+            OpenModel:false
 
 
         }
@@ -149,7 +151,14 @@ this.setState({
 
     }
    
+    componentDidMount=()=>{
   
+            // this.setState({
+            //     countDown:this.state.countDown -1
+            // })
+    
+        
+  }
        
     onChange = (e) => {
        
@@ -198,33 +207,57 @@ this.setState({
 
     }
     onSubmit = (e) => {
+
         e.preventDefault();
+   
+     
         if (!this.state.firstName || !this.state.lastName) {
-            alert("Fill out your first and last name please!");
+         
         } else if (this.state.password.length < 6) {
-            alert(
-                `Choose a password that is at least 6 characters`
-            );
+       
         } else {
-            alert(`Welcome ${this.state.firstName} ${this.state.lastName}`);
+          
         }
 
         const { firstName, lastName, email, phoneNumber, address, dateOfBirth, profilePic, password } = this.state;
 
         axios.post('/api/users', { firstName, lastName, email, phoneNumber, address, dateOfBirth, profilePic, password })
             .then((result) => {
-                if (result == 'already') {
+                console.log(result)
+                if (result.data == 'already') {
                     alert('There is already an account with that email addres,please try a diffrent one')
                 } else {
-
+                 
+                    this.setState({
+                        OpenModel:true
+                    })
+                    setInterval(()=>  this.setState({
+                        countDown:this.state.countDown -1
+                    })
+                 , 1000);
+               
                 }
             })
-            window.location='/'
+   
     }
     render() {
+        if(this.state.countDown===0){
+            window.location='/'
+        }
         return (
             <MuiThemeProvider>
-                
+           
+                    <Dialog
+                        title={`This Window Will Redirect You in: ${this.state.countDown} secounds`}
+                        autoDetectWindowHeight={true}
+                        className='Dialogue'
+                        modal={false}
+                        open={this.state.OpenModel}
+                        onRequestClose={this.handleClose}
+                        style={{ margin: 'auto', maxHeight: '100%'}}
+                    >
+                    <h1> Welcome To TechCheck {this.state.firstName}</h1>
+</Dialog>
                 <div styles={{margin:"auto"}}>
            
                 {<h1 style={styles.h1}>Create an Account!</h1>}
@@ -315,8 +348,9 @@ this.setState({
                         </RaisedButton>
                     </div>
                     <div>
+                    {/* */}
                         <br />
-                        <RaisedButton onClick={this.onSubmit} label="Submit!" disabled={!this.state.formValid} />
+                        <RaisedButton onClick={this.onSubmit} disabled={!this.state.formValid}  label="Submit!"  />
                     </div>
                 </div>
             </MuiThemeProvider>

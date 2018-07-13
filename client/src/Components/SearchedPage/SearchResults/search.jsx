@@ -7,8 +7,16 @@ import productsApi from '../../Data/products-api'
 import axios from "axios";
 import SvgIcon from 'material-ui/SvgIcon';
 import Snackbar from 'material-ui/Snackbar';
-
+// import Noproducts  from './SearchHOC/SearchHOC';
+import WhileLoading from './SearchHOC/loadingSearch'
+// import SearchPage from './SearchHOC/Noproducts'
+import loadingGif from '../SearchResults/SearchHOC/loading.gif'
+import '../SearchResults/SearchHOC/searchHoc.css'
+import { Row, Col, Container } from 'react-grid-system';
+import n404 from './SearchHOC/404.jpg'
+import './SearchHOC/searchHoc.css'
 const CartIcon = (props) => (
+
   <SvgIcon {...props}>
     <svg fill="#FFFFF" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg">
       <path d="M0 0h24v24H0zm18.31 6l-2.76 5z" fill="none" />
@@ -26,12 +34,45 @@ const styles = {
     border: '1px solid gray'
   },
   gridList: {
-    width: '90%',
+    width: '100%',
     height: '100%',
-    overflowY: 'auto',
+   
   },
-
+search:{
+  width: '90%',
+  height: '100%',
+  overflowY: 'auto',
+},
+noProducts:{
+  height:'100%',
+  width:'100%'
+  
+}
 };
+// const theSearching= async (props)=>{
+//   let Mydata=  await axios({
+//     method: 'post',
+//     url: `/api/products/search`,
+//     data: {
+//       search: props.match.params.search,
+//       page: 0,
+//       limit: 15
+
+//     }
+//   })
+//   console.log(Mydata)
+//     // .then(products => {
+//       while(Mydata==null||Mydata===undefined){
+// this.setState({
+// loading:true
+// })
+//       }
+   
+//        this.setState({
+//          products: Mydata.data,
+
+//      })
+// }
 
 class ProductSearch extends Component {
   state = {
@@ -59,12 +100,14 @@ class ProductSearch extends Component {
       autoHideDuration2: 4000,
       message2:'',
       open2: false,
-      CartItems:[]
+      CartItems:[],
+      loading:true,
+      productsNumber:0
    
   }
-  componentDidMount = () => {
-   
-    axios({
+  componentDidMount =async()=>{
+    let MyData=null;
+     MyData=  await axios({
       method: 'post',
       url: `/api/products/search`,
       data: {
@@ -74,14 +117,30 @@ class ProductSearch extends Component {
 
       }
     })
-      .then(products => {
-     
-        this.setState({
-          products: products.data,
-
-        })
-      })
+    console.log(MyData.data)
+    console.log( MyData.data.length >= 15)
+      // .then(products => {
+        if( MyData.data.length >= 15){
+          console.log('hey i am products')
+                
+                   this.setState({
+                    products: MyData.data,
+          
+                   },console.log('vbitchskjadk'))
+                  }
+        
+//        else if(MyData.data==null||MyData.data==undefined||MyData.data.length >=0){
+//          this.console.log('i am in loading ')
+// this.setState({
+//   loading:true
+// })
+//         }else if(MyData.data.length >=0&&this.state.loading===false){
+//           this.setState({
+//             productsNumber:MyData.data.length
+//           })
+//         }
   }
+ 
   // userId:this.props.match.params.id,
 
   // productsApi.catagorySearch(this.props.match.params.category)
@@ -274,62 +333,132 @@ console.log(this.props)
     });
   }
   render() {
+    console.log(this.state.productsNumber <=0)
+    let MYSearch;
 
+    if(this.state.loading===true){
+      console.log('laoding page')
+      MYSearch=<div style={styles.root}>
+      
+      <p>Results per page:</p>
+      <button onClick={this.limit} value={15}>15</button><button onClick={this.limit} value={30}>30</button>
+      <GridList
+        cellHeight={180}
+        style={styles.gridList}
+        cols={4}
+        padding={10}
+      >
+
+          <GridTile    
+          class='theLoadingArea'
+            style={{ border: '1px ' }}>
+               <img src={loadingGif} class="loading"alt='loading'/>
+               </GridTile>
+       <br />
+        <div className='pages'>
+          <button onClick={this.pages} name='1' value={0} >1</button><button onClick={this.pages} name='2' value={15} >2</button> <button onClick={this.pages} name='3' value={30} >3</button> <button onClick={this.pages} value={45} >4</button> <button onClick={this.pages} value={60} >5</button>
+        </div>
+
+      </GridList>
+    
+       
+    </div>
+    }
+//     else if(this.state.productsNumber ===0){
+//       console.log('no products')
+//    MYSearch=  <Container> <div >
+// {/* <Row> */}
+
+//       <p>Results per page:</p>
+//       <button onClick={this.limit} value={15}>15</button><button onClick={this.limit} value={30}>30</button>
+//       {/* </Row>
+//       <Row> */}
+//       <GridList
+//       cellHeight={180}
+//       style={styles.gridList}
+//       cols={4}
+//       padding={10}
+//       >
+
+//       <div className='noproducts' >
+//       {/* <h1> <b> 404 No Products Found </b></h1> */}
+//       {/* <img style={styles.noProducts} src={n404} alt='no Products'/> */}
+//       </div>
+   
+//       <br /><br/>
+//       </GridList>
+//       {/* </Row>
+//       <Row> */}
+            
+//       <div className='pages'>
+//         <button onClick={this.pages} name='1' value={0} >1</button><button onClick={this.pages} name='2' value={15} >2</button> <button onClick={this.pages} name='3' value={30} >3</button> <button onClick={this.pages} value={45} >4</button> <button onClick={this.pages} value={60} >5</button>
+//       </div>
+//       {/* </Row> */}
+//       </div>
+//       </Container>
+//     }
+    else if(this.state.loading===false) {
+      console.log('products page')
+   MYSearch=   <div>
+      <Snackbar
+open={this.state.open2}
+message={this.state.message2}
+action=""
+ autoHideDuration={3000}
+ 
+ onActionClick={this.handleActionClick2}
+ onRequestClose={this.handleRequestClose}
+/>
+<p>Results per page:</p>
+<button onClick={this.limit} value={15}>15</button><button onClick={this.limit} value={30}>30</button>
+<GridList
+cellHeight={180}
+style={styles.gridList}
+cols={4}
+padding={10}
+>
+
+{this.state.products.map((tile) => (
+ 
+  <GridTile
+    key={tile.id}
+    title={tile.productName}
+    style={{ border: '1px solid gray' }}
+    price={tile.price}
+    subtitle={<span>Price <b>{tile.price}</b></span>}
+    actionIcon={<IconButton><CartIcon  price={tile.price}  value={tile.id} onClick={this.getProductId2} /></IconButton>}
+  >
+
+    {/* <IconButton><StarBorder color="white" /></IconButton> */}
+    <img value={tile.id}
+      onClick={this.getProductId} src={`https://s3-us-west-1.amazonaws.com/techcheckbucket/${tile.userUploadImage1}`} alt='Searched Products' />
+  </GridTile>
+))}
+<br />
+<div className='pages'>
+  <button onClick={this.pages} name='1' value={0} >1</button><button onClick={this.pages} name='2' value={15} >2</button> <button onClick={this.pages} name='3' value={30} >3</button> <button onClick={this.pages} value={45} >4</button> <button onClick={this.pages} value={60} >5</button>
+</div>
+
+</GridList>
+<Snackbar
+open={this.state.open}
+message={this.state.message}
+action="undo"
+ autoHideDuration={this.state.autoHideDuration}
+ 
+ onActionClick={this.handleActionClick1}
+ onRequestClose={this.handleRequestClose}
+
+/>
+ </div>
+    }
     return (
       <div style={styles.root}>
-        <Snackbar
-          open={this.state.open2}
-          message={this.state.message2}
-          action=""
-           autoHideDuration={3000}
-           
-           onActionClick={this.handleActionClick2}
-           onRequestClose={this.handleRequestClose}
-        />
-        <p>Results per page:</p>
-        <button onClick={this.limit} value={15}>15</button><button onClick={this.limit} value={30}>30</button>
-        <GridList
-          cellHeight={180}
-          style={styles.gridList}
-          cols={4}
-          padding={10}
-        >
-
-          {this.state.products.map((tile) => (
-           
-            <GridTile
-              key={tile.id}
-              title={tile.productName}
-              style={{ border: '1px solid gray' }}
-              price={tile.price}
-              subtitle={<span>Price <b>{tile.price}</b></span>}
-              actionIcon={<IconButton><CartIcon  price={tile.price}  value={tile.id} onClick={this.getProductId2} /></IconButton>}
-            >
-        
-              {/* <IconButton><StarBorder color="white" /></IconButton> */}
-              <img value={tile.id}
-                onClick={this.getProductId} src={`https://s3-us-west-1.amazonaws.com/techcheckbucket/${tile.userUploadImage1}`} alt='Searched Products' />
-            </GridTile>
-          ))}
-         <br />
-          <div className='pages'>
-            <button onClick={this.pages} name='1' value={0} >1</button><button onClick={this.pages} name='2' value={15} >2</button> <button onClick={this.pages} name='3' value={30} >3</button> <button onClick={this.pages} value={45} >4</button> <button onClick={this.pages} value={60} >5</button>
-          </div>
-
-        </GridList>
-        <Snackbar
-          open={this.state.open}
-          message={this.state.message}
-          action="undo"
-           autoHideDuration={this.state.autoHideDuration}
-           
-           onActionClick={this.handleActionClick1}
-           onRequestClose={this.handleRequestClose}
-        />
+{MYSearch}
          
       </div>
     )
   }
 }
 
-export default ProductSearch;
+export default ProductSearch

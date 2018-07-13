@@ -1,0 +1,13 @@
+.loading{
+    height: 400px;
+    width: 400px;
+}
+noproducts{
+    background-image: 
+    url('./404.jpg');
+    background-repeat: no-repeat;
+    background-size: cover ;  display: block;
+}
+/* .theLoadingArea{
+    height: 700px;
+} */
