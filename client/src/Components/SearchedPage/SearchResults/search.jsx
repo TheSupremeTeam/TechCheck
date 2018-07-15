@@ -101,12 +101,20 @@ class ProductSearch extends Component {
       message2:'',
       open2: false,
       CartItems:[],
-      loading:true,
-      productsNumber:0
+      loading:false,
+      productsNumber:0,
+      noProductsFound:false
    
   }
   componentDidMount =async()=>{
     let MyData=null;
+ 
+            
+               this.setState({
+                loading:true
+      
+               },)
+              
      MyData=  await axios({
       method: 'post',
       url: `/api/products/search`,
@@ -117,6 +125,11 @@ class ProductSearch extends Component {
 
       }
     })
+    if(MyData.data.length >=15){
+      this.setState({
+        loading:false
+      })
+    }
     console.log(MyData.data)
     console.log( MyData.data.length >= 15)
       // .then(products => {
@@ -129,16 +142,17 @@ class ProductSearch extends Component {
                    },console.log('vbitchskjadk'))
                   }
         
-//        else if(MyData.data==null||MyData.data==undefined||MyData.data.length >=0){
-//          this.console.log('i am in loading ')
-// this.setState({
-//   loading:true
-// })
-//         }else if(MyData.data.length >=0&&this.state.loading===false){
-//           this.setState({
-//             productsNumber:MyData.data.length
-//           })
-//         }
+       else if(MyData.data==null||MyData.data==undefined){
+     console.log('i am in loading ')
+this.setState({
+  loading:true
+})
+        }else if(MyData.data.length >=0){
+          this.setState({
+            noProductsFound:true,
+            loading:false
+          })
+        }
   }
  
   // userId:this.props.match.params.id,
@@ -180,16 +194,27 @@ class ProductSearch extends Component {
       open: true,
       priceDelete:e.currentTarget.attributes.price.nodeValue,
       message2:'Item removed from your cart'
-    }, this.CartBackend)
+    }, this.TellIfSignedIn)
 
   }
 
+TellIfSignedIn=()=>{ 
+  console.log(this.props.userId)
+  this.getItemDate()
+  if(this.props.userId !== undefined  ||this.props.userId !==null ){
+    // this.CartBackend()
+  }else if(this.props.userId ==null ||this.props.userId ===undefined){
+    console.log('worksd')
+  
+  }
+}
 
 
   addToCart = (e) => {
 
     console.log(this.state.productId);
-    this.props.onClick(this.state.price, this.state);
+    this.props.NotSignedIn(this.state.price, this.state)
+    // this.props.onClick(this.state.price, this.state);
     this.setState({
      
     });
@@ -339,64 +364,69 @@ console.log(this.props)
     if(this.state.loading===true){
       console.log('laoding page')
       MYSearch=<div style={styles.root}>
-      
+      <Container>
+       
       <p>Results per page:</p>
       <button onClick={this.limit} value={15}>15</button><button onClick={this.limit} value={30}>30</button>
+     
+    
       <GridList
-        cellHeight={180}
+        cellHeight={130}
         style={styles.gridList}
-        cols={4}
-        padding={10}
+        cols={1}
+        padding={20}
       >
 
           <GridTile    
-          class='theLoadingArea'
-            style={{ border: '1px ' }}>
-               <img src={loadingGif} class="loading"alt='loading'/>
+          className='theLoadingArea'
+            style={{ border: '1px ',width:'450px' }}>
+               <img src={loadingGif} className="loading"alt='loading'/>
                </GridTile>
-       <br />
-        <div className='pages'>
+               <div className='pages'>
           <button onClick={this.pages} name='1' value={0} >1</button><button onClick={this.pages} name='2' value={15} >2</button> <button onClick={this.pages} name='3' value={30} >3</button> <button onClick={this.pages} value={45} >4</button> <button onClick={this.pages} value={60} >5</button>
-        </div>
+        </div>     
 
       </GridList>
-    
+   
+      </Container>
        
     </div>
     }
-//     else if(this.state.productsNumber ===0){
-//       console.log('no products')
-//    MYSearch=  <Container> <div >
-// {/* <Row> */}
+    else if(this.state.noProductsFound ===true){
+      console.log('no products')
+   MYSearch=  <div> <Container> <div >
+{/* <Row> */}
 
-//       <p>Results per page:</p>
-//       <button onClick={this.limit} value={15}>15</button><button onClick={this.limit} value={30}>30</button>
-//       {/* </Row>
-//       <Row> */}
-//       <GridList
-//       cellHeight={180}
-//       style={styles.gridList}
-//       cols={4}
-//       padding={10}
-//       >
+      <p>Results per page:</p>
+      <button onClick={this.limit} value={15}>15</button><button onClick={this.limit} value={30}>30</button>
+      {/* </Row>
+      <Row> */}
+      <GridList
+      cellHeight={180}
+      style={styles.gridList}
+      cols={4}
+      padding={10}
+      >
 
-//       <div className='noproducts' >
-//       {/* <h1> <b> 404 No Products Found </b></h1> */}
-//       {/* <img style={styles.noProducts} src={n404} alt='no Products'/> */}
-//       </div>
+      <div className='noproducts' >
+      <h1> <b> 404 No Products Found </b></h1> 
+      </div>
+      {/* <img style={styles.noProducts} src={n404} alt='no Products'/>
+     
    
-//       <br /><br/>
-//       </GridList>
-//       {/* </Row>
-//       <Row> */}
-            
-//       <div className='pages'>
-//         <button onClick={this.pages} name='1' value={0} >1</button><button onClick={this.pages} name='2' value={15} >2</button> <button onClick={this.pages} name='3' value={30} >3</button> <button onClick={this.pages} value={45} >4</button> <button onClick={this.pages} value={60} >5</button>
-//       </div>
-//       {/* </Row> */}
-//       </div>
-//       </Container>
-//     }
+      <br /><br/>
+     
+      {/* </Row>
+      <Row> */}
+             </GridList>
+      <div className='pages'>
+        <button onClick={this.pages} name='1' value={0} >1</button><button onClick={this.pages} name='2' value={15} >2</button> <button onClick={this.pages} name='3' value={30} >3</button> <button onClick={this.pages} value={45} >4</button> <button onClick={this.pages} value={60} >5</button>
+      </div>
+      {/* </Row> */}
+      </div>
+      </Container>
+      </div>
+    }
     else if(this.state.loading===false) {
       console.log('products page')
    MYSearch=   <div>
@@ -455,8 +485,9 @@ action="undo"
     return (
       <div style={styles.root}>
 {MYSearch}
+ </div>
          
-      </div>
+
     )
   }
 }

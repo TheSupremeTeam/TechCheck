@@ -346,9 +346,9 @@ console.log('hrll',newo)
           for(let i=0;i <600;i++){
             let o=0
           }
-          setTimeout(()=>      res.send(products) , 1000);
+       res.send(products) 
            
-     
+      //  setTimeout(()=>      , 16000);
         })
       
       },

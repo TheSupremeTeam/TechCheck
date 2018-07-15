@@ -96,6 +96,20 @@ class App extends Component {
  
 //    console.log( dateSplit)
     }
+    addingToCarNotSignedIn = (i, j) => {
+        console.log(i)
+        console.log(j)
+        let cartitem = this.state.cartItem + 1;
+        let cartamount = this.state.cartAmount + i;
+        let newcartarray = this.state.cartarray.concat(j);
+        this.setState({ cartItem: cartitem, cartAmount: cartamount, cartarray: newcartarray });
+       
+
+        localStorage.setItem('CartItem', cartitem);
+        localStorage.setItem('CartAmount', cartamount);
+        localStorage.setItem('cartarray', JSON.stringify(newcartarray));
+
+    };
      CheckCartOnLoad =(noItems) =>{
 let changeSource =this.changePhotoSource(this.state.userCreatedAt);
 if(changeSource===true){
@@ -371,7 +385,8 @@ let theData= await axios({
                     cartitem={this.state.cartItem}
                     cartamount={this.state.cartAmount}
                     cartarray={this.state.cartarray}
-                    onClick={this.handleClick} {...props }
+                    onClick={this.handleClick}
+                    NotSignedIn={this.addingToCarNotSignedIn} {...props }
                 />
             );
         }
@@ -415,7 +430,7 @@ let theData= await axios({
                     cartamount={this.state.cartAmount}
                     cartarray={this.state.cartarray}
                     onClick={this.handleClick}
-                    
+                    NotSignedIn={this.addingToCarNotSignedIn}
                     handleDelete={this.handleDelete} {...props }
                 />
             )
