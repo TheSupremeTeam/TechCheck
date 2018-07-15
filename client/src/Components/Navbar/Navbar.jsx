@@ -124,7 +124,7 @@ class Navbar extends Component {
         >
      
         
-          <CartModal cartitem={this.props.cartitem} cartamount={this.props.cartamount} cartarray={this.props.cartarray}
+          <CartModal cartitem={this.props.cartitem} loading={this.props.loading} cartamount={this.props.cartamount} cartarray={this.props.cartarray}
             onClick={this.props.onClick} onDelete={this.props.onDelete}
           />
         </AppBar>

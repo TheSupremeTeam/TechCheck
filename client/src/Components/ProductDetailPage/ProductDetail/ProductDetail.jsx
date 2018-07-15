@@ -7,7 +7,9 @@ import products1 from '../../Data/products-api'
 import { Row, Col, Container } from 'react-grid-system';
 import Divider from 'material-ui/Divider';
 import SvgIcon from 'material-ui/SvgIcon';
-
+import productsApi from '../../Data/products-api';
+import axios from "axios";
+import loadingGif from './theloading.gif';
 const CartIcon = (props) => (
   <SvgIcon {...props}>
     <svg fill="#FFFFF" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg">
@@ -36,129 +38,197 @@ class productDetail extends Component {
             verified: false,
             status: "",
             createdAt: "",
+            CartItems:[],
+            loading:false
            
         }
     }
     
-    componentDidMount = () => {
-        console.log('product detail')
-        console.log(this.props);
-        products1.Product(this.props.match.params.id).then(data => {
-            console.log(data)
+    componentDidMount =async  () => {
+        // console.log('product detail')
+        // console.log(this.props);
+        let productData =null;
+        if(productData===null){
+            this.setState({
+                loading:true
+            })
+        }
+    productData= await    products1.Product(this.props.match.params.id)
+            console.log(productData)
+            
             const photosImg = {
-                img1: data.data.userUploadImage1,
+                img1: productData.data.userUploadImage1,
                 
             }
 
             const imgs = [
                 photosImg,
             ]
-            console.log(data.data.verified)
+            console.log(productData.data.verified)
             let sold;
-            if (data.data.status==='sold'){
+            if (productData.data.status==='sold'){
                 sold='Sold'
             }
             let used;
-            if(data.data.condition=='old'){
+            if(productData.data.condition=='old'){
 used='Used'
             }
             let true1;
-            if(data.data.verified==true){
+            if(productData.data.verified==true){
 true1='True'
             }else{
                 true1='False'
             }
             this.setState({
+                loading:false,
                 photos: imgs,
-                productId: data.data.id,
-                userId: data.data.userId,
-                productName: data.data.productName,
-                serialNumber: data.data.serialNumber,
-                category: data.data.category,
-                price: data.data.price,
-                productDescription: data.data.productDescription,
-                condition:used|| data.data.condition,
-                warranty: data.data.warranty,
-                packaging: data.data.packaging,
-                verified: true1||data.data.verified,
-                status: sold||data.data.status,
-                createdAt: data.data.createdAt
+                productId: productData.data.id,
+                userId: productData.data.userId,
+                productName: productData.data.productName,
+                serialNumber: productData.data.serialNumber,
+                category: productData.data.category,
+                price:productData.data.price,
+                productDescription: productData.data.productDescription,
+                condition:used|| productData.data.condition,
+                warranty: productData.data.warranty,
+                packaging: productData.data.packaging,
+                verified: true1||productData.data.verified,
+                status: sold||productData.data.status,
+                createdAt: productData.data.createdAt
             })
-        })
+    
+    }
+    addToCart2=()=>{
+        this.props.onClick(this.state.CartItems);
+      }
+    UpdateCart=()=>{
+        console.log(this.props)
+            productsApi.CheckCart(this.props.UserId).then(data => {
+          
+          this.setState({
+            CartItems:data
+          },this.addToCart2)
+            })
+          }
+    AddingToBackEnd=()=>{
+        axios({
+            method: 'post',
+            url: `/api/products/cart`,
+            data: {
+              Product: this.state.productId,
+              user:this.props.UserId
+      
+            }
+          }).then(next => {
+            this.UpdateCart();
+          })
     }
     render() {
-        console.log(this.state.verified);
-        console.log(this.props);
+      let product=null;
+      if(this.state.loading === true){
+          product=<div >
+          <Container>
+           
+          <p>Results per page:</p>
+          <button onClick={this.limit} value={15}>15</button><button onClick={this.limit} value={30}>30</button>
+         
+        
+          <GridList
+            cellHeight={130}
+    
+            cols={1}
+            padding={20}
+          >
+    
+              <GridTile    
+              className='theLoadingArea'
+                style={{ border: '1px ',width:'450px' }}>
+                   <img src={loadingGif} className="loading"alt='loading'/>
+                   </GridTile>
+                   <div className='pages'>
+              <button onClick={this.pages} name='1' value={0} >1</button><button onClick={this.pages} name='2' value={15} >2</button> <button onClick={this.pages} name='3' value={30} >3</button> <button onClick={this.pages} value={45} >4</button> <button onClick={this.pages} value={60} >5</button>
+            </div>     
+    
+          </GridList>
+       
+          </Container>
+           
+        </div>
+      }
+      else{
+       product=<div> <br/>
+        <Container>
+            <Paper>
+                <Row>
+                    <Col sm={6}>
+                        <GridList
+                        cellHeight={300}
+                        cols={1}
+                        padding={5}
+                        >
+                        {/* {console.log(this.state.photos)} */}
+                            {this.state.photos.map((tile) => (
+                            <GridTile
+                                key={tile.img}
+                            >
+                                <div style={{margin: '10px', width: '430px', height: '270px', maxHeight: '100%', maxWidth: '93%'}}>
+                                    <img src={`https://s3-us-west-1.amazonaws.com/techcheckbucket/${tile.img1}`} alt='productimage' style={{height: '100%', width: '100%', border: '1px solid red'}} />
+                                </div>
+                            </GridTile>
+                        ))}
+                        </GridList>
+                    </Col>
+                    <Col sm={6} >
+                        <div style={{ margin: 'auto 30px auto 10px', maxWidth: '100%', maxHeight: '100%', height: '95%'}}>
+                        <h3 style={{textAlign: 'center'}}>{this.state.productName}</h3>
+                        <Divider/>
+                        <p style={{textAlign: 'left'}}>Product Description : {this.state.productDescription}</p>
+                        </div>
+                    </Col>
+               
+                </Row>
+            </Paper>
+            <Paper >
+                <Row style={{margin: '10px 0px'}}>
+                    <Col sm={6}>                 
+                        <List>
+                            <ListItem>Price :${this.state.price} </ListItem>
+                            <Divider/>
+                            <ListItem>Category : {this.state.category}</ListItem>
+                            <Divider/>
+                            <ListItem>Condition : {this.state.condition}</ListItem>
+                            <Divider/>
+                            <ListItem>Warranty : {this.state.warranty}</ListItem>
+                            <Divider/>
+                        </List>                   
+                    </Col>
+                    <Col sm={6}>
+                        <List>
+                            <ListItem>Packaging : {this.state.packaging}</ListItem>
+                            <Divider/>
+                            <ListItem>Serial Number : {this.state.serialNumber}</ListItem>
+                            <Divider/>
+                            <ListItem>Verified : {this.state.verified}</ListItem>
+                            <Divider/>
+                            <ListItem>Product Status : {this.state.status}</ListItem>
+                            <Divider/>
+                        </List>                     
+                    </Col>                       
+                </Row>
+                <div style={{ marginBottom: '60px', padding: '40px', }}>
+                    <FlatButton
+                        icon={<CartIcon />}
+                        primary={true}
+                        style={{width: '30%', backgroundColor: 'white' }}
+                        onClick={this.AddingToBackEnd} />
+                </div>
+            </Paper>
+        </Container>
+        </div>
+      }
         return (
             <div>
-                <br/>
-                <Container>
-                    <Paper>
-                        <Row>
-                            <Col sm={6}>
-                                <GridList
-                                cellHeight={300}
-                                cols={1}
-                                padding={5}
-                                >
-                                {/* {console.log(this.state.photos)} */}
-                                    {this.state.photos.map((tile) => (
-                                    <GridTile
-                                        key={tile.img}
-                                    >
-                                        <div style={{margin: '10px', width: '430px', height: '270px', maxHeight: '100%', maxWidth: '93%'}}>
-                                            <img src={`https://s3-us-west-1.amazonaws.com/techcheckbucket/${tile.img1}`} alt='productimage' style={{height: '100%', width: '100%', border: '1px solid red'}} />
-                                        </div>
-                                    </GridTile>
-                                ))}
-                                </GridList>
-                            </Col>
-                            <Col sm={6} >
-                                <div style={{ margin: 'auto 30px auto 10px', maxWidth: '100%', maxHeight: '100%', height: '95%'}}>
-                                <h3 style={{textAlign: 'center'}}>{this.state.productName}</h3>
-                                <Divider/>
-                                <p style={{textAlign: 'left'}}>Product Description : {this.state.productDescription}</p>
-                                </div>
-                            </Col>
-                       
-                        </Row>
-                    </Paper>
-                    <Paper >
-                        <Row style={{margin: '10px 0px'}}>
-                            <Col sm={6}>                 
-                                <List>
-                                    <ListItem>Price :${this.state.price} </ListItem>
-                                    <Divider/>
-                                    <ListItem>Category : {this.state.category}</ListItem>
-                                    <Divider/>
-                                    <ListItem>Condition : {this.state.condition}</ListItem>
-                                    <Divider/>
-                                    <ListItem>Warranty : {this.state.warranty}</ListItem>
-                                    <Divider/>
-                                </List>                   
-                            </Col>
-                            <Col sm={6}>
-                                <List>
-                                    <ListItem>Packaging : {this.state.packaging}</ListItem>
-                                    <Divider/>
-                                    <ListItem>Serial Number : {this.state.serialNumber}</ListItem>
-                                    <Divider/>
-                                    <ListItem>Verified : {this.state.verified}</ListItem>
-                                    <Divider/>
-                                    <ListItem>Product Status : {this.state.status}</ListItem>
-                                    <Divider/>
-                                </List>                     
-                            </Col>                       
-                        </Row>
-                        <div style={{ marginBottom: '60px', padding: '40px', }}>
-                            <FlatButton
-                                icon={<CartIcon />}
-                                primary={true}
-                                style={{width: '30%', backgroundColor: 'white' }}
-                                onClick={() => this.props.onClick(this.state.price,  this.state)} />
-                        </div>
-                    </Paper>
-                </Container>
+               {product}
             </div>
         );
     }

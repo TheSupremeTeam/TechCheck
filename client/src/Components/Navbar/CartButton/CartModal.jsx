@@ -9,7 +9,7 @@ import Divider from 'material-ui/Divider';
 import { Row, Col } from 'react-grid-system';
 import Avatar from 'material-ui/Avatar/Avatar';
 import SvgIcon from 'material-ui/SvgIcon';
-
+import loadingGif from './loading.1.gif'
 const CancelIcon = (props) => (
     <SvgIcon {...props}>
         <svg fill="#FFFFFF" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg">
@@ -27,29 +27,34 @@ const style = {
 class CartModal extends Component {
     state = {
         open: false,
-        loading: false
+        loading: true
     };
+    ProductDetails=(id)=>{
+        console.log(id)
+        window.location = `/product_detail/${id}`
+    }
     componentDidMount = () => {
-        if (this.props.cartarray.length > 1) {
-            this.setState({
-                loading: true
-            })
-        } else {
-            this.setState({
-                loading: false
-            })
-        }
+        // if (this.props.cartarray.length > 1) {
+        //     this.setState({
+        //         loading: true
+        //     })
+        // } else {
+        //     this.setState({
+        //         loading: false
+        //     })
+        // }
     }
     componentWillReceiveProps = () => {
-        if (this.props.cartarray.length > 1) {
-            this.setState({
-                loading: true
-            })
-        } else {
-            this.setState({
-                loading: false
-            })
-        }
+        console.log(this.props)
+        // if (this.props.cartarray.length > 1) {
+        //     this.setState({
+        //         loading: true
+        //     })
+        // } else {
+        //     this.setState({
+        //         loading: false
+        //     })
+        // }
     }
     handleClick = (event) => {
         // This prevents ghost click.
@@ -91,8 +96,25 @@ console.log(k,'hey')
     };
 
     render() {
+        let items=null;
+        if(this.props.loading ===true){
 
-        const items = this.props.cartarray.map((step) => {
+   
+       items= <div>
+       
+       <img src={loadingGif} style={{display: 'block',width:'200px',height:'200px',position: 'relative', margin: 'auto',marginLeft: 'auto'
+    ,marginRight: 'auto'}}className="loading"alt='loading'/>
+       
+      
+           
+  
+       
+        </div>
+             }
+             else{
+
+       
+   items = this.props.cartarray.map((step) => {
          
             return (
                 <MenuItem key={step.productId} style={{ fontSize: '12px', textAlign: 'center' }}>
@@ -100,10 +122,10 @@ console.log(k,'hey')
                 
                         <Col sm={4}>
                        
-                            <Avatar  src={`https://s3-us-west-1.amazonaws.com/techcheckbucket/${step.photos[0].img1}`} style={{ position: 'relative', top: '10px', right: '5px' }} />
+                            <Avatar onClick={()=>this.ProductDetails(step.id)} src={`https://s3-us-west-1.amazonaws.com/techcheckbucket/${step.photos[0].img1}`} style={{ position: 'relative', top: '10px', right: '5px' }} />
                         </Col>
                         <Col sm={6}>
-                            <div style={{ position: 'relative', top: '4px', right: '12px' }}>
+                            <div onClick={()=>this.ProductDetails(step.id)} style={{ position: 'relative', top: '4px', right: '12px' }}>
                                 Price: {step.price} 
                             </div>
                         </Col>
@@ -114,7 +136,7 @@ console.log(k,'hey')
                 </MenuItem>
             );
         });
-
+    }
         const actions = [
 
             <Link to='check_out'>

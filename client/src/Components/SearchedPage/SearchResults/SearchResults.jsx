@@ -4,7 +4,8 @@ import IconButton from 'material-ui/IconButton';
 import productsApi from '../../Data/products-api'
 import axios from "axios";
 import SvgIcon from 'material-ui/SvgIcon';
-
+import loadingGif from '../SearchResults/SearchHOC/loading.gif'
+import { Row, Col, Container } from 'react-grid-system';
 const CartIcon = (props) => (
   <SvgIcon {...props}>
     <svg fill="#FFFFF" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg">
@@ -57,13 +58,19 @@ class ProductSearch extends Component {
             verified: "",
             status: "",
             createdAt: "",
-            CartItems:[]
+            CartItems:[],  
+             loading:false
           
   }
-  componentDidMount = () => {
+  componentDidMount = async () => {
 
-   
-    axios({
+    let myData=null;
+ 
+            
+    this.setState({
+     loading:true
+    })
+   myData= await  axios({
       method: 'post',
       url: `/api/products/category`,
       data: {
@@ -73,13 +80,16 @@ class ProductSearch extends Component {
 
       }
     })
-      .then(products => {
-      
+      // .then(products => {
+      if(myData.data.length >= 15){
         this.setState({
-          products: products.data,
+          products: myData.data,
+          loading:false
 
         })
-      })
+      }
+      
+      // })
   }
  
   console = () => {
@@ -203,36 +213,70 @@ this.setState({
     })
   }
   render() {
+let search=null;
+if(this.state.loading === true){
+search=<div style={styles.root}>
+  <Container>
+   
+  <p>Results per page:</p>
+  <button onClick={this.limit} value={15}>15</button><button onClick={this.limit} value={30}>30</button>
+ 
 
+  <GridList
+    cellHeight={130}
+    style={styles.gridList}
+    cols={1}
+    padding={20}
+  >
+
+      <GridTile    
+      className='theLoadingArea'
+        style={{ border: '1px ',width:'450px' }}>
+           <img src={loadingGif} className="loading"alt='loading'/>
+           </GridTile>
+           <div className='pages'>
+      <button onClick={this.pages} name='1' value={0} >1</button><button onClick={this.pages} name='2' value={15} >2</button> <button onClick={this.pages} name='3' value={30} >3</button> <button onClick={this.pages} value={45} >4</button> <button onClick={this.pages} value={60} >5</button>
+    </div>     
+
+  </GridList>
+
+  </Container>
+   
+</div>
+}else if(this.state.loading ===false ){
+search=  <div>
+  <p>Results per page:</p>
+  <button onClick={this.limit} value={15}>15</button><button onClick={this.limit} value={30}>30</button>
+  <GridList
+    cellHeight={180}
+    style={styles.gridList}
+    cols={4}
+    padding={10}
+  >
+
+    {this.state.products.map((tile) => (
+      <GridTile
+        key={tile.id}
+        title={tile.productName}
+        price={tile.price}
+        style={{maxHeight: '100%', maxWidth: '100%', border: '1px solid grey', fontSize: '10px'}}
+        subtitle={<span>Price <b>{tile.price}</b></span>}
+        actionIcon={<IconButton><CartIcon value={tile.id} onClick={this.getProductId2}/></IconButton>}
+        titleBackground="linear-gradient(to top, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
+      >
+        <img value={tile.id}
+    onClick={this.getProductId} src={`https://s3-us-west-1.amazonaws.com/techcheckbucket/${tile.userUploadImage1}`} alt='Searched Products' />
+      </GridTile>
+    ))}<br />
+    <div className='pages'>
+      <button onClick={this.pages} name='1' value={0} >1</button><button onClick={this.pages} name='2' value={15} >2</button> <button onClick={this.pages} name='3' value={30} >3</button> <button onClick={this.pages} value={45} >4</button> <button onClick={this.pages} value={60} >5</button>
+    </div>
+  </GridList>
+  </div>
+}
     return (
       <div style={styles.root}>
-        <p>Results per page:</p>
-        <button onClick={this.limit} value={15}>15</button><button onClick={this.limit} value={30}>30</button>
-        <GridList
-          cellHeight={180}
-          style={styles.gridList}
-          cols={4}
-          padding={10}
-        >
-
-          {this.state.products.map((tile) => (
-            <GridTile
-              key={tile.id}
-              title={tile.productName}
-              price={tile.price}
-              style={{maxHeight: '100%', maxWidth: '100%', border: '1px solid grey', fontSize: '10px'}}
-              subtitle={<span>Price <b>{tile.price}</b></span>}
-              actionIcon={<IconButton><CartIcon value={tile.id} onClick={this.getProductId2}/></IconButton>}
-              titleBackground="linear-gradient(to top, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
-            >
-              <img value={tile.id}
-          onClick={this.getProductId} src={`https://s3-us-west-1.amazonaws.com/techcheckbucket/${tile.userUploadImage1}`} alt='Searched Products' />
-            </GridTile>
-          ))}<br />
-          <div className='pages'>
-            <button onClick={this.pages} name='1' value={0} >1</button><button onClick={this.pages} name='2' value={15} >2</button> <button onClick={this.pages} name='3' value={30} >3</button> <button onClick={this.pages} value={45} >4</button> <button onClick={this.pages} value={60} >5</button>
-          </div>
-        </GridList>
+    {search}
       </div>
     )
   }

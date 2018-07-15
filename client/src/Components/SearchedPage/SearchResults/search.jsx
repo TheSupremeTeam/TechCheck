@@ -3,7 +3,7 @@ import { GridList, GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import Subheader from 'material-ui/Subheader';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
-import productsApi from '../../Data/products-api'
+import productsApi from '../../Data/products-api';
 import axios from "axios";
 import SvgIcon from 'material-ui/SvgIcon';
 import Snackbar from 'material-ui/Snackbar';

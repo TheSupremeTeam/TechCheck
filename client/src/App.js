@@ -35,6 +35,7 @@ class App extends Component {
         thePhotoSource: "https://s3-us-west-1.amazonaws.com/techcheckphotos/",
         dataSource:'',
         TimeOfDate:false,
+        loadingCart:false
 
     };
 
@@ -272,13 +273,16 @@ let newcartarray = cartStuff.data;
     };
 
     handleDelete =async (productId,amount, k) => {
-        console.log(productId
-            
-            )
-     
+        console.log(productId)
+        let theData =null;
+        if(theData===null){
+            this.setState({
+                loadingCart:true
+            })
+        }
         if(this.state.theId != null){
             console.log('here in your moms ')
-let theData= await axios({
+ theData= await axios({
     method: 'post',
     url: '/api/products/delete/cart',
     data: { user:this.state.theId,
@@ -289,6 +293,9 @@ let theData= await axios({
         })
         console.log(theData)
         if(theData.data==='product Deleted'){
+            this.setState({
+                loadingCart:false
+            })
          cartApi.CheckCart(this.state.theId).then(data => {
           
                 let numberOf=data.data.length
@@ -381,6 +388,7 @@ let theData= await axios({
         const RoutedProductDetailPage = (props) => {
             return (
                 <ProductDetailPage
+                UserId={this.state.theId}
                     component={ProductDetailPage}
                     cartitem={this.state.cartItem}
                     cartamount={this.state.cartAmount}
@@ -445,7 +453,7 @@ let theData= await axios({
                     
 
                         <Navbar 
-                     
+                     loading={this.state.loadingCart}
                         photoSource={this.state.thePhotoSource}
                         userdata={this.state.userDataObj}
                             dataSource={this.state.dataSource}
